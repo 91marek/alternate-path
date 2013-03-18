@@ -1,5 +1,6 @@
 #include <boost/graph/graphviz.hpp>
 #include <iostream>
+#include "Graph.hpp"
 
 using namespace boost;
 
@@ -39,10 +40,10 @@ int main(int argc, const char* argv[])
 
 	// Sample graph as an std::istream;
 	std::istringstream
-		gvgraph("digraph { graph [name=\"graphname\"]  a  c e [mass = 6.66] }");
+		gvgraph("digraph { graph [name=\"graphname\"]  a c e [mass = 6.66] a->c [weight=1.0]}");
 
 	bool status = read_graphviz(gvgraph,graph,dp,"node_id");
 	
-	write_graphviz(std::cout, graph);
+	write_graphviz_dp(std::cout, graph, dp, std::string("node_id"));
 	return 0;
 }
