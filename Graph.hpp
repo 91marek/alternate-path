@@ -1,23 +1,23 @@
-#include <boost/graph/adjacency_list.hpp>
-#include <boost/graph/graphviz.hpp>
-#include <iostream>
-
 #ifndef GRAPH_HPP
 #define GRAPH_HPP
+
+#include <boost/graph/adjacency_list.hpp>
+#include <iostream>
 
 using namespace boost;
 
 class Graph
 {
 public:
-	typedef adjacency_list_traits<listS, vecS, undirectedS>::vertex_descriptor vertex_descriptor;
+	//typedef adjacency_list_traits<listS, vecS, undirectedS>::vertex_descriptor vertex_descriptor;
 	// Vertex properties
 	typedef property < vertex_name_t, std::string,
 			property < vertex_distance_t, double,
-			property < vertex_predecessor_t, vertex_descriptor > > > VertexProperty;
+			property < vertex_predecessor_t, int > > > VertexProperty;
 	// Edge properties
 	typedef property < edge_weight_t, double,
-			property < edge_color_t, default_color_type > > EdgeProperty;
+			property < edge_color_t, default_color_type,
+			property < edge_name_t, std::string > > > EdgeProperty;
 	// Graph properties
 	typedef property < graph_name_t, std::string > GraphProperty;
 	// adjacency_list-based graph type
@@ -38,7 +38,7 @@ public:
 	virtual ~Graph()
 	{}
 	
-	void readGraph(const std::istream& in);
+	void readGraph(std::istream& in);
 private:
 	GraphContainer graph;
 };

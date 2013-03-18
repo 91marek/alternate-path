@@ -1,6 +1,7 @@
 #include "Graph.hpp"
+#include <boost/graph/graphviz.hpp>
 
-void Graph::readGraph(const std::istream& in)
+void Graph::readGraph(std::istream& in)
 {
 	dynamic_properties dp;
 	dp.property("node_id", get(vertex_name, graph));
