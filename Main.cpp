@@ -1,11 +1,29 @@
 #include <boost/graph/graphviz.hpp>
+#include <boost/program_options.hpp>
 #include <iostream>
 #include "Graph.hpp"
 
 using namespace boost;
+using namespace boost::program_options;
 
 int main(int argc, const char* argv[])
 {
+	// Declare the supported options.
+	options_description desc("Allowed options");
+	desc.add_options()
+		("help", "produce help message")
+		("graph", value<int>(), "input graph")
+	;
+	variables_map vm;
+	store(parse_command_line(argc, argv, desc), vm);
+	notify(vm);
+	
+	if (vm.count("help"))
+	{
+		std::cout << desc << "\n";
+		return 1;
+	}
+	
 	// Vertex properties
 	typedef property < vertex_name_t, std::string,
 		property < vertex_color_t, float > > vertex_p;

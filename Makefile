@@ -1,5 +1,5 @@
 all: main graph
-		g++ main.o graph.o -lboost_graph -o ap
+		g++ main.o graph.o -lboost_graph -lboost_program_options -o ap
 main: graph Main.cpp
 		g++ -c Main.cpp -o main.o
 graph: Graph.hpp Graph.cpp
