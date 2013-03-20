@@ -3,18 +3,21 @@
 
 #include <boost/graph/adjacency_list.hpp>
 #include <iostream>
-
+#include <queue>
 using namespace boost;
 using namespace std;
+
+
+class CompVertexDist;
 class Graph
 {
 public:
-	//typedef adjacency_list_traits<listS, vecS, undirectedS>::vertex_descriptor vertex_descriptor;
+	typedef adjacency_list_traits<listS, vecS, undirectedS>::vertex_descriptor vertex_descriptor_tmp;
 	
 	// Vertex properties
 	typedef property < vertex_name_t, std::string,
 			property < vertex_distance_t, double,
-			property < vertex_predecessor_t, int > > > VertexProperty;
+			property < vertex_predecessor_t, vertex_descriptor_tmp > > > VertexProperty;
 	// Edge properties
 	typedef property < edge_weight_t, double,
 			property < edge_color_t, std::string,
@@ -30,9 +33,9 @@ public:
 	
 	typedef graph_traits<GraphContainer>::vertex_iterator VertexIter;
 	typedef graph_traits<GraphContainer>::edge_iterator EdgeIter;
-	
+	typedef graph_traits<GraphContainer>::out_edge_iterator OutEdgeIter;
 	typedef list<Edge> EdgeList;
-	
+	typedef priority_queue<Vertex, deque<Vertex>, CompVertexDist> VertexDistPriorityQueue;
 	/* constructors etc. */
 	Graph()
 	{}
@@ -61,3 +64,13 @@ public:
 	
 };
 #endif
+
+class CompVertexDist {
+		const Graph::GraphContainer& graph;
+	public:
+		CompVertexDist(const Graph::GraphContainer& g): graph(g) {}
+		bool operator()(const Graph::Vertex& v1, const Graph::Vertex& v2) const 
+		{
+			return get(vertex_distance, graph, v1) > get(vertex_distance, graph, v2);
+		}
+};

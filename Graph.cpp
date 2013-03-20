@@ -2,17 +2,8 @@
 #include <boost/graph/graphviz.hpp>
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
-#include <queue>
+#include <boost/foreach.hpp>
 
-class CompVertexDist {
-		const Graph::GraphContainer& graph;
-	public:
-		CompVertexDist(const Graph::GraphContainer& g): graph(g) {}
-		bool operator()(const Graph::Vertex& v1, const Graph::Vertex& v2) const 
-		{
-			return get(vertex_distance, graph, v1) < get(vertex_distance, graph, v2);
-		}
-};
 
 void Graph::readGraph(std::istream& in)
 {
@@ -53,6 +44,8 @@ const Graph::GraphContainer& Graph::getGraph()
 Graph::EdgeList Graph::getShortestPath(const Vertex& v1, const Vertex& v2)
 {
 	EdgeList result;
+	VertexDistPriorityQueue pq = VertexDistPriorityQueue(CompVertexDist(graph));
+	//cout<<pq.size();
 	/* Reset all vertexes to default properties */
 	VertexIter v, v_end;
 	tie(v,v_end) = vertices(graph);
@@ -60,11 +53,34 @@ Graph::EdgeList Graph::getShortestPath(const Vertex& v1, const Vertex& v2)
 	{
 		put(vertex_distance, graph, *v, numeric_limits<double>::max());
 		put(vertex_predecessor, graph, *v, -1);
+		
+		/* Set lenght of shortest path from v1 to v1 to 0 */
+		if(*v == v1)
+			put(vertex_distance, graph, v1, 0);
+		pq.push(*v);
 	}
-	/* Set lenght of shortest path from v1 to v1 to 0 */
-	put(vertex_distance, graph, v1, 0);
+	/* Run algorithm */
+	while(!pq.empty())
+	{
+		const Vertex& v_source = pq.top();
+		double source_distance = get(vertex_distance, graph, v_source);
+		pq.pop();
+		OutEdgeIter e, e_end;
+		tie(e,e_end) = out_edges(v_source, graph);
+		for(e; e!=e_end; ++e){
+			const Vertex& v_target = target(*e, graph);
+			double tmp_edge_weight = get(edge_weight, graph, *e);
+			double target_distance = get(vertex_distance, graph, v_target);
+			if( target_distance > source_distance + tmp_edge_weight )
+			{
+				put(vertex_distance, graph, v_target, source_distance + tmp_edge_weight);
+				put(vertex_predecessor, graph, v_target, v_source);
+			}
+		}
+	}
+
 	
-	priority_queue<Vertex, deque<Vertex>, CompVertexDist> pq (CompVertexDist(graph));
+	
 	return result;
 }
 
