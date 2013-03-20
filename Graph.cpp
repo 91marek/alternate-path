@@ -1,5 +1,18 @@
 #include "Graph.hpp"
 #include <boost/graph/graphviz.hpp>
+#include <boost/bind.hpp>
+#include <boost/function.hpp>
+#include <queue>
+
+class CompVertexDist {
+		const Graph::GraphContainer& graph;
+	public:
+		CompVertexDist(const Graph::GraphContainer& g): graph(g) {}
+		bool operator()(const Graph::Vertex& v1, const Graph::Vertex& v2) const 
+		{
+			return get(vertex_distance, graph, v1) < get(vertex_distance, graph, v2);
+		}
+};
 
 void Graph::readGraph(std::istream& in)
 {
@@ -31,8 +44,27 @@ void Graph::setEdgeColor(const Edge& e, Color c)
 	}
 	put(edge_color, graph, e, color);
 }
-/* selectors and properties */
+
 const Graph::GraphContainer& Graph::getGraph()
 {
 	return graph;
 }
+
+Graph::EdgeList Graph::getShortestPath(const Vertex& v1, const Vertex& v2)
+{
+	EdgeList result;
+	/* Reset all vertexes to default properties */
+	VertexIter v, v_end;
+	tie(v,v_end) = vertices(graph);
+	for(v; v!=v_end; v++)
+	{
+		put(vertex_distance, graph, *v, numeric_limits<double>::max());
+		put(vertex_predecessor, graph, *v, -1);
+	}
+	/* Set lenght of shortest path from v1 to v1 to 0 */
+	put(vertex_distance, graph, v1, 0);
+	
+	priority_queue<Vertex, deque<Vertex>, CompVertexDist> pq (CompVertexDist(graph));
+	return result;
+}
+

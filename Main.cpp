@@ -53,6 +53,7 @@ int main(int argc, const char* argv[])
 	Graph::Vertex v2 = *v;
 	
 	g.setEdgeColor(boost::edge(v1, v2, g.getGraph()).first, Graph::RED);
+	g.getShortestPath(v1,v2);
 	g.writeGraph(std::cout);
 	
 	return 0;
