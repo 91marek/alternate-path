@@ -82,7 +82,7 @@ void Graph::calculateDistances(const Vertex v1, const Vertex v2)
 		if( source_distance == numeric_limits<double>::max() )
 		{
 			//all remaining vertices are inaccessible from source
-			cout<<"Jestem tutej!"<<endl;
+			cout<<"Jestem tutej!"<<get(vertex_name, graph, v_source)<<endl;
 			break;
 		}
 		

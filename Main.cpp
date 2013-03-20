@@ -59,7 +59,7 @@ int main(int argc, const char* argv[])
 	//name_to_vertex[get(vertex_name, g, v)] = v;
 	
 	//g.setEdgeColor(boost::edge(v1, v2, g.getGraph()).first, Graph::RED);
-	cout<<"Szukam pomiedzy: "<<get(vertex_name, g.getGraph(), v1)<< " a "<< get(vertex_name, g.getGraph(), v2)<<endl;
+	cout<<"Szukam pomiedzy: ";;//get(vertex_name, g.getGraph(), v1)<< " a "<< get(vertex_name, g.getGraph(), v2)<<endl;
 	g.getShortestPath(v1,v2);
 	g.writeGraph(std::cout);
 	
