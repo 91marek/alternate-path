@@ -54,14 +54,21 @@ public:
 	/* IO */
 	void readGraph(std::istream& in);
 	void writeGraph(std::ostream& out);
+	EdgeList getShortestPath(const Vertex v1, const Vertex v2);
+	
+	/* DEBUG */
+	void DEBUGprint(EdgeList& e);
 //private:
 	GraphContainer graph;
 	
 	enum Color{RED, GREEN, BLUE, BLACK};
-	void setEdgeColor(const Edge& e, Color c);
+	void setEdgeColor(const Edge e, Color c);
 	
-	EdgeList getShortestPath(const Vertex& v1, const Vertex& v2);
-	bool compVertexDist(const Vertex& v1, const Vertex& v2);
+	
+	void calculateDistances(const Vertex v1, const Vertex v2);
+	EdgeList readShortestPath(const Vertex v1, const Vertex v2);
+	
+	
 	
 };
 #endif
@@ -70,7 +77,7 @@ class CompVertexDist {
 		const Graph::GraphContainer& graph;
 	public:
 		CompVertexDist(const Graph::GraphContainer& g): graph(g) {}
-		bool operator()(const Graph::Vertex& v1, const Graph::Vertex& v2) const 
+		bool operator()(const Graph::Vertex v1, const Graph::Vertex v2) const 
 		{
 			return get(vertex_distance, graph, v1) > get(vertex_distance, graph, v2);
 		}

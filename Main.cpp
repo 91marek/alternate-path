@@ -51,13 +51,14 @@ int main(int argc, const char* argv[])
 	
 	Graph::Vertex v1 = *v;
 	v++;
+	v++;
 	Graph::Vertex v2 = *v;
 	
 	//std::map<std::string, Vertex> name_to_vertex;
 	//BGL_FORALL_VERTICES(v, g, Graph) 
 	//name_to_vertex[get(vertex_name, g, v)] = v;
 	
-	g.setEdgeColor(boost::edge(v1, v2, g.getGraph()).first, Graph::RED);
+	//g.setEdgeColor(boost::edge(v1, v2, g.getGraph()).first, Graph::RED);
 	cout<<"Szukam pomiedzy: "<<get(vertex_name, g.getGraph(), v1)<< " a "<< get(vertex_name, g.getGraph(), v2)<<endl;
 	g.getShortestPath(v1,v2);
 	g.writeGraph(std::cout);
