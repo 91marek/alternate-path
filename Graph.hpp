@@ -28,8 +28,8 @@ public:
 	typedef graph_traits<GraphContainer>::vertex_descriptor Vertex;
 	typedef graph_traits<GraphContainer>::edge_descriptor Edge;
 	
-	typedef typename graph_traits<GraphContainer>::vertex_iterator VertexIter;
-	typedef typename graph_traits<GraphContainer>::edge_iterator EdgeIter;
+	typedef graph_traits<GraphContainer>::vertex_iterator VertexIter;
+	typedef graph_traits<GraphContainer>::edge_iterator EdgeIter;
 	/* constructors etc. */
 	Graph()
 	{}
