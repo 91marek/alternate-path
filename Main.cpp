@@ -41,16 +41,21 @@ int main(int argc, const char* argv[])
 		//gname(get_property(graph,graph_name));
 	//dp.property("name",gname);
 
-	// Sample graph as an std::istream;
-	std::ifstream in("data/example1.dot");
+	std::ifstream in(filename.c_str());
+	//TODO: check stream
+	
 	Graph g;
 	g.readGraph(in);
 	Graph::VertexIter v, v_end;
-	v= boost::vertices(g.getGraph()).first;
+	v = boost::vertices(g.getGraph()).first;
 	
 	Graph::Vertex v1 = *v;
 	v++;
 	Graph::Vertex v2 = *v;
+	
+	//std::map<std::string, Vertex> name_to_vertex;
+	//BGL_FORALL_VERTICES(v, g, Graph) 
+	//name_to_vertex[get(vertex_name, g, v)] = v;
 	
 	g.setEdgeColor(boost::edge(v1, v2, g.getGraph()).first, Graph::RED);
 	g.getShortestPath(v1,v2);

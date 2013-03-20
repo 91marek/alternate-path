@@ -4,6 +4,7 @@
 #include <boost/function.hpp>
 #include <boost/foreach.hpp>
 
+#include <iostream>
 
 void Graph::readGraph(std::istream& in)
 {
@@ -46,15 +47,15 @@ Graph::EdgeList Graph::getShortestPath(const Vertex& v1, const Vertex& v2)
 	EdgeList result;
 	VertexDistPriorityQueue pq = VertexDistPriorityQueue(CompVertexDist(graph));
 	//cout<<pq.size();
-	/* Reset all vertexes to default properties */
+	/* Reset all vertices to default properties */
 	VertexIter v, v_end;
 	tie(v,v_end) = vertices(graph);
 	for(v; v!=v_end; v++)
 	{
 		put(vertex_distance, graph, *v, numeric_limits<double>::max());
-		put(vertex_predecessor, graph, *v, -1);
+		put(vertex_predecessor, graph, *v, *v);
 		
-		/* Set lenght of shortest path from v1 to v1 to 0 */
+		/* Set length of shortest path from v1 to v1 to 0 */
 		if(*v == v1)
 			put(vertex_distance, graph, v1, 0);
 		pq.push(*v);
@@ -63,8 +64,8 @@ Graph::EdgeList Graph::getShortestPath(const Vertex& v1, const Vertex& v2)
 	while(!pq.empty())
 	{
 		const Vertex& v_source = pq.top();
-		double source_distance = get(vertex_distance, graph, v_source);
 		pq.pop();
+		double source_distance = get(vertex_distance, graph, v_source);
 		OutEdgeIter e, e_end;
 		tie(e,e_end) = out_edges(v_source, graph);
 		for(e; e!=e_end; ++e){
@@ -79,7 +80,13 @@ Graph::EdgeList Graph::getShortestPath(const Vertex& v1, const Vertex& v2)
 		}
 	}
 
-	
+	std::cout << "==============" << std::endl;
+	tie(v,v_end) = vertices(graph);
+	for(v; v!=v_end; v++)
+	{
+		std::cout << get(vertex_name, graph, *v) << ": " << get(vertex_distance, graph, *v) << std::endl;
+	}
+	std::cout << "==============" << std::endl;
 	
 	return result;
 }
