@@ -12,5 +12,13 @@
 *.la
 *.a
 
-# Compiled files
+# Executable files
 ap
+
+# LaTeX files
+*.aux
+*.bbl
+*.log
+*.out
+*.toc
+*.synctex.gz
