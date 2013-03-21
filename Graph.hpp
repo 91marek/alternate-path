@@ -49,9 +49,21 @@ public:
 	/* properties accessors */
 	
 	/* IO */
-	void readGraph(std::istream& in);
-	void writeGraph(std::ostream& out);
+	void readGraph(istream& in);
+	void writeGraph(ostream& out);
+	
+	EdgeList getShortestPath(const string& v1, string& v2);
 	EdgeList getShortestPath(const Vertex v1, const Vertex v2);
+	
+	/* getters */
+	const std::string& getVertexName(const Vertex v) const
+	{
+		return get(vertex_name, graph, v);
+	}
+	const GraphContainer& getGraphContainer() const
+	{
+		return graph;
+	}
 	
 	/* DEBUG */
 	void DEBUGprint(EdgeList& e);
@@ -61,12 +73,8 @@ public:
 	enum Color{RED, GREEN, BLUE, BLACK};
 	void setEdgeColor(const Edge e, Color c);
 	
-	
 	void calculateDistances(const Vertex v1, const Vertex v2);
 	EdgeList readShortestPath(const Vertex v1, const Vertex v2);
-	
-	
-	
 };
 #endif
 

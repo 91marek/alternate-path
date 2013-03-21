@@ -10,16 +10,16 @@ using namespace boost::program_options;
 int main(int argc, const char* argv[])
 {
 	std::string filename;
-	std::string source;
-	std::string target;
+	std::string source_vertex;
+	std::string target_vertex;
 
 	// Declare the supported options.
 	options_description desc("Usage: " + std::string(argv[0]) + " [options]\nOptions:");
 	desc.add_options()
 		("help,h", "Produce help message")
 		("file,f", value<std::string>(&filename), "Input graph filename")
-		("source,s", value<std::string>(&source), "Source vertex name")
-		("target,t", value<std::string>(&target), "Target vertex name")
+		("source,s", value<std::string>(&source_vertex), "Source vertex name")
+		("target,t", value<std::string>(&target_vertex), "Target vertex name")
 	;
 	positional_options_description p;
 	p.add("file", -1);
@@ -34,33 +34,24 @@ int main(int argc, const char* argv[])
 		return 1;
 	}
 	
-	std::cout << "filename: " << filename << "\ns: " << source << "\nt: " << target << std::endl;
+	std::cout << "f: " << filename << "\ns: " << source_vertex << "\nt: " << target_vertex << std::endl;
 	
 	// Use ref_property_map to turn a graph property into a property map
 	//boost::ref_property_map<graph_t*,std::string>
 		//gname(get_property(graph,graph_name));
 	//dp.property("name",gname);
-
+	
+	//reading
+	Graph g;
 	std::ifstream in(filename.c_str());
 	//TODO: check stream
-	
-	Graph g;
 	g.readGraph(in);
-	Graph::VertexIter v, v_end;
-	v = boost::vertices(g.getGraph()).first;
 	
-	Graph::Vertex v1 = *v;
-	v++;
-	v++;
-	Graph::Vertex v2 = *v;
+	//calculating
+	cout<<"Szukam pomiedzy: "<<source_vertex<< " a "<<target_vertex<<endl;
+	g.getShortestPath(source_vertex, target_vertex);
 	
-	//std::map<std::string, Vertex> name_to_vertex;
-	//BGL_FORALL_VERTICES(v, g, Graph) 
-	//name_to_vertex[get(vertex_name, g, v)] = v;
-	
-	//g.setEdgeColor(boost::edge(v1, v2, g.getGraph()).first, Graph::RED);
-	cout<<"Szukam pomiedzy: "<<get(vertex_name, g.getGraph(), v1)<< " a "<< get(vertex_name, g.getGraph(), v2)<<endl;
-	g.getShortestPath(v1,v2);
+	//writing
 	g.writeGraph(std::cout);
 	
 	return 0;

@@ -41,9 +41,37 @@ void Graph::setEdgeColor(const Edge e, Color c)
 	put(edge_color, graph, e, color);
 }
 
-const Graph::GraphContainer& Graph::getGraph()
+Graph::EdgeList Graph::getShortestPath(const string& v1, string& v2)
 {
-	return graph;
+	VertexIter v, v_end;
+	Vertex v1_desc, v2_desc;
+	bool v1_found, v2_found;
+	tie(v, v_end) = vertices(graph);
+	for(; v != v_end; ++v)
+	{
+		const string& v_name = get(vertex_name, graph, *v);
+		if(v_name == v1)
+		{
+			v1_desc = *v;
+			v1_found = true;
+			if(v2_found)
+				break;
+		}
+		else if (v_name == v2)
+		{
+			v2_desc = *v;
+			v2_found = true;
+			if(v1_found)
+				break;
+		}
+	}
+	if(!v1_found || !v2_found)
+	{
+		//could be exception
+		return EdgeList();
+	}
+	calculateDistances(v1_desc, v2_desc);
+	return readShortestPath(v1_desc, v2_desc);
 }
 
 Graph::EdgeList Graph::getShortestPath(const Vertex v1, const Vertex v2)
@@ -122,7 +150,6 @@ Graph::EdgeList Graph::readShortestPath(const Vertex v1, const Vertex v2)
 	}
 	DEBUGprint(result);
 	return result;
-	
 }
 
 /* DEBUGS */
