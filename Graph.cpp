@@ -28,7 +28,7 @@ void Graph::writeGraph(std::ostream& out)
 	write_graphviz_dp(out, graph, dp);
 }
 
-void Graph::setEdgeColor(const Edge e, Color c)
+void Graph::setEdgeColor(const Edge& e, Color c)
 {
 	std::string color;
 	switch(c)
@@ -89,13 +89,15 @@ std::pair<Graph::Vertex, Graph::Vertex> Graph::getVerticesByName(const string& v
 	throw std::string("Vertices \"" + v1 + "\" and \"" + v2 + "\" not found.");
 }
 
-Graph::EdgeList Graph::getShortestPath(const Vertex v1, const Vertex v2)
+Graph::EdgeList Graph::findShortestPath(const Vertex v1, const Vertex v2)
 {
-	calculateDistances(v1, v2);
-	return readShortestPath(v1, v2);
+	if(!computeDistances(v1, v2))
+		return EdgeList();	// return empty list when v2 is inaccessible from v1
+	else
+		return readShortestPath(v1, v2);
 }
 
-void Graph::calculateDistances(const Vertex v1, const Vertex v2)
+bool Graph::computeDistances(const Vertex v1, const Vertex v2)
 {
 	// priority queue
 	vector<Vertex> pq = vector<Vertex>(num_vertices(graph));
@@ -121,13 +123,16 @@ void Graph::calculateDistances(const Vertex v1, const Vertex v2)
 		pq.pop_back();
 		//cout<<"Rozmiar kolejki: "<<pq.size()<<endl;
 		if(v_source == v2)
+		{
+			//target vertex encountered
 			break;
+		}
 		double source_distance = get(vertex_distance, graph, v_source);
 		
 		if( source_distance == numeric_limits<double>::max() )
 		{
-			//all remaining vertices are inaccessible from source
-			break;
+			//all remaining vertices are inaccessible from v1
+			return false;
 		}
 		
 		OutEdgeIter e, e_end;
@@ -149,8 +154,10 @@ void Graph::calculateDistances(const Vertex v1, const Vertex v2)
 	tie(v,v_end) = vertices(graph);
 	for(; v!=v_end; v++)
 	{
-		//cout << get(vertex_name, graph, *v) << ": " << get(vertex_distance, graph, *v) << endl;
+		cout << get(vertex_name, graph, *v) << ": " << get(vertex_distance, graph, *v) << endl;
 	}
+	
+	return true;
 }
 
 Graph::EdgeList Graph::readShortestPath(const Vertex v1, const Vertex v2)

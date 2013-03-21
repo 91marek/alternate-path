@@ -65,35 +65,36 @@ int main(int argc, const char* argv[])
 	}
 	cout<<"Deskryptory: "<<v_desc.first<<" i "<<v_desc.second<<endl;
 	
-	Graph::EdgeList shortest = g.getShortestPath(v_desc.first, v_desc.second);
+	Graph::EdgeList shortest = g.findShortestPath(v_desc.first, v_desc.second);
 	g.setEdgesColor(shortest, Graph::GREEN);// TODO niektore mialy byc na czerwono, bo nie ma zapasowej sciezki
-	g.generateHTML("index.html"); //TODO dobra nazwa pliku?
+	g.generateHTML("index.html"); //TODO dobra nazwa pliku? (raczej to trzeba zrobić na koniec)
 	g.setEdgesColor(shortest, Graph::BLACK);
 	
 	BOOST_FOREACH(Graph::Edge e, shortest)
 	{
 		/* get old edge params */
-		Graph::GraphContainer& container = g.getGraphContainer();
-		Graph::Vertex old_edge_end1, old_edge_end2;
-		old_edge_end1 = source(e, container);
-		old_edge_end2 = target(e, container);
-		double old_edge_weight = get(edge_weight, container, e);
-		string old_edge_name = get(edge_name, container, e);
+		Graph::Vertex old_edge_end1 = g.getSourceVertex(e);
+		Graph::Vertex old_edge_end2 = g.getTargetVertex(e);
+		double old_edge_weight = g.getEdgeWeight(e);
+		string old_edge_url = g.getEdgeURL(e);
 	
 		/* remove current edge */
-		cout<<"Usuwam krawedz"<<e;
-		remove_edge(old_edge_end1, old_edge_end2, container);
+		cout<<"Usuwam krawedz: "<<e<<endl;
+		g.removeEdge(old_edge_end1, old_edge_end2);
 		g.writeGraph(std::cout);
 		/* find new shortest path */
-		Graph::EdgeList new_shortest = g.getShortestPath(v_desc.first, v_desc.second);
+		Graph::EdgeList new_shortest = g.findShortestPath(v_desc.first, v_desc.second);
+		// jeśli new_shortest.empty() to trzeba ustawić kolor rozspójniającej krawędzi
+		// (właśnie usuniętej) na czerwony, ale dla głównego obrazka (trzeba zapamiętać to na boku
+		// a główny obrazek pokolorować na końcu i dopiero zapisać)
 		g.setEdgesColor(new_shortest, Graph::GREEN);
 		/* restore edge */
-		Graph::Edge restored = add_edge(old_edge_end1, old_edge_end2, container).first;
-		put(edge_weight, container, restored, old_edge_weight); //restore its weight
-		put(edge_name, container, restored, old_edge_name); //restore its URL (TODO prawdopodobnie jest to niepotrzebne)
+		Graph::Edge restored = g.addEdge(old_edge_end1, old_edge_end2);
+		g.setEdgeWeight(restored, old_edge_weight);
+		g.setEdgeURL(restored, old_edge_url);
 		g.setEdgeColor(restored, Graph::BLUE);
 		
-		g.generateHTML(old_edge_name); //TODO dobra nazwa pliku?
+		g.generateHTML(old_edge_url); //TODO dobra nazwa pliku?
 		
 		/* clean all up */
 		g.setEdgesColor(new_shortest, Graph::BLACK);
