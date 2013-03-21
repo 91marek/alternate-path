@@ -41,6 +41,14 @@ void Graph::setEdgeColor(const Edge e, Color c)
 	put(edge_color, graph, e, color);
 }
 
+void Graph::setEdgesColor(const EdgeList& el, Color c)
+{
+	BOOST_FOREACH(Edge e, el)
+	{
+		setEdgeColor(e, c);
+	}
+}
+
 Graph::EdgeList Graph::getShortestPath(const string& v1, string& v2)
 {
 	VertexIter v, v_end;
@@ -70,8 +78,7 @@ Graph::EdgeList Graph::getShortestPath(const string& v1, string& v2)
 		//could be exception
 		return EdgeList();
 	}
-	calculateDistances(v1_desc, v2_desc);
-	return readShortestPath(v1_desc, v2_desc);
+	return getShortestPath(v1_desc, v2_desc);
 }
 
 Graph::EdgeList Graph::getShortestPath(const Vertex v1, const Vertex v2)
@@ -104,7 +111,7 @@ void Graph::calculateDistances(const Vertex v1, const Vertex v2)
 		std::pop_heap(pq.begin(), pq.end(), CompVertexDist(graph));
 		Vertex v_source = pq.back();
 		pq.pop_back();
-		cout<<"Rozmiar kolejki: "<<pq.size()<<endl;
+		//cout<<"Rozmiar kolejki: "<<pq.size()<<endl;
 		if(v_source == v2)
 			break;
 		double source_distance = get(vertex_distance, graph, v_source);
@@ -121,7 +128,7 @@ void Graph::calculateDistances(const Vertex v1, const Vertex v2)
 			Vertex v_target = target(*e, graph);
 			double tmp_edge_weight = get(edge_weight, graph, *e);
 			double target_distance = get(vertex_distance, graph, v_target);
-			cout<<target_distance<<" "<<source_distance<<" "<<tmp_edge_weight<<endl;
+			//cout<<target_distance<<" "<<source_distance<<" "<<tmp_edge_weight<<endl;
 			if( target_distance > source_distance + tmp_edge_weight )
 			{
 				put(vertex_distance, graph, v_target, source_distance + tmp_edge_weight);
@@ -134,7 +141,7 @@ void Graph::calculateDistances(const Vertex v1, const Vertex v2)
 	tie(v,v_end) = vertices(graph);
 	for(; v!=v_end; v++)
 	{
-		cout << get(vertex_name, graph, *v) << ": " << get(vertex_distance, graph, *v) << endl;
+		//cout << get(vertex_name, graph, *v) << ": " << get(vertex_distance, graph, *v) << endl;
 	}
 }
 
@@ -150,6 +157,11 @@ Graph::EdgeList Graph::readShortestPath(const Vertex v1, const Vertex v2)
 	}
 	DEBUGprint(result);
 	return result;
+}
+
+void Graph::generateHTML(const std::string& filename){
+//TODO
+return;
 }
 
 /* DEBUGS */

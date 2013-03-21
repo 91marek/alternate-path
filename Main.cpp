@@ -1,6 +1,7 @@
 #include <boost/graph/graphviz.hpp>
 #include <boost/program_options.hpp>
 #include <boost/graph/adjacency_list.hpp>
+#include <boost/foreach.hpp>
 #include <iostream>
 #include "Graph.hpp"
 
@@ -49,10 +50,43 @@ int main(int argc, const char* argv[])
 	
 	//calculating
 	cout<<"Szukam pomiedzy: "<<source_vertex<< " a "<<target_vertex<<endl;
-	g.getShortestPath(source_vertex, target_vertex);
+	Graph::GraphContainer container = g.getGraphContainer();
+	Graph::EdgeList shortest = g.getShortestPath(source_vertex, target_vertex);
+	g.setEdgesColor(shortest, Graph::GREEN);// TODO niektore mialy byc na czerwono, bo nie ma zapasowej sciezki
+	g.generateHTML("index.html"); //TODO dobra nazwa pliku?
+	g.setEdgesColor(shortest, Graph::BLACK);
 	
+	BOOST_FOREACH(Graph::Edge e, shortest)
+	{
+		/* get old edge parms */
+		Graph::Vertex old_edge_end1, old_edge_end2;
+		old_edge_end1 = source(e, container);
+		old_edge_end2 = target(e, container);
+		double old_edge_weight = get(edge_weight, container, e);
+		string old_edge_name = get(edge_name, container, e);
+	
+		/*remove current edge */
+		cout<<"Usuwam krawed"<<e;
+		remove_edge(old_edge_end1, old_edge_end2, container);
+		g.writeGraph(std::cout);
+		/* find new shortes path */
+		Graph::EdgeList new_shortest = g.getShortestPath(source_vertex, target_vertex);//TODO Znow odwolujemy się po nazwie do wierzcholkow
+		g.setEdgesColor(new_shortest, Graph::GREEN);
+		/* restore edge */
+		Graph::Edge restored = add_edge(old_edge_end1, old_edge_end2, container).first;
+		put(edge_weight, container, restored, old_edge_weight); //restore its weight
+		put(edge_name, container, restored, old_edge_name); //restore its URL (TODO prawdopodobnie jest to niepotrzebne)
+		g.setEdgeColor(restored, Graph::BLUE);
+		
+		g.generateHTML(old_edge_name); //TODO dobra nazwa pliku?
+		
+		/* clean all up */
+		g.setEdgesColor(new_shortest, Graph::BLACK);
+		g.setEdgeColor(restored, Graph::BLACK);
+	
+	}
 	//writing
-	g.writeGraph(std::cout);
+	//g.writeGraph(std::cout);
 	
 	return 0;
 }

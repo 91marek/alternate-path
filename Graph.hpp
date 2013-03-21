@@ -44,13 +44,13 @@ public:
 
 	virtual ~Graph()
 	{}
-	const GraphContainer& getGraph();
 	
 	/* properties accessors */
 	
 	/* IO */
 	void readGraph(istream& in);
 	void writeGraph(ostream& out);
+	void generateHTML(const std::string& filename);//TODO nie wiem nic o parametrach, które tu beda.
 	
 	EdgeList getShortestPath(const string& v1, string& v2);
 	EdgeList getShortestPath(const Vertex v1, const Vertex v2);
@@ -60,7 +60,7 @@ public:
 	{
 		return get(vertex_name, graph, v);
 	}
-	const GraphContainer& getGraphContainer() const
+	inline GraphContainer& getGraphContainer()
 	{
 		return graph;
 	}
@@ -72,6 +72,7 @@ public:
 	
 	enum Color{RED, GREEN, BLUE, BLACK};
 	void setEdgeColor(const Edge e, Color c);
+	void setEdgesColor(const EdgeList& el, Color c);
 	
 	void calculateDistances(const Vertex v1, const Vertex v2);
 	EdgeList readShortestPath(const Vertex v1, const Vertex v2);
