@@ -49,36 +49,45 @@ void Graph::setEdgesColor(const EdgeList& el, Color c)
 	}
 }
 
-Graph::EdgeList Graph::getShortestPath(const string& v1, string& v2)
+std::pair<Graph::Vertex, Graph::Vertex> Graph::getVerticesByName(const string& v1, const string& v2) const
 {
 	VertexIter v, v_end;
-	Vertex v1_desc, v2_desc;
-	bool v1_found, v2_found;
+	std::pair<Vertex, Vertex> result;
 	tie(v, v_end) = vertices(graph);
 	for(; v != v_end; ++v)
 	{
 		const string& v_name = get(vertex_name, graph, *v);
 		if(v_name == v1)
 		{
-			v1_desc = *v;
-			v1_found = true;
-			if(v2_found)
-				break;
+			result.first = *v;
+			for(++v; v != v_end; ++v)
+			{
+				if(get(vertex_name, graph, *v) == v2)
+				{
+					result.second = *v;
+					return result;
+				}
+			}
+			// nie znaleziono v2
+			return result;
 		}
-		else if (v_name == v2)
+		else if(v_name == v2)
 		{
-			v2_desc = *v;
-			v2_found = true;
-			if(v1_found)
-				break;
+			result.second = *v;
+			for(++v; v != v_end; ++v)
+			{
+				if(get(vertex_name, graph, *v) == v1)
+				{
+					result.first = *v;
+					return result;
+				}
+			}
+			// nie znaleziono v1
+			return result;
 		}
 	}
-	if(!v1_found || !v2_found)
-	{
-		//could be exception
-		return EdgeList();
-	}
-	return getShortestPath(v1_desc, v2_desc);
+	// nie znaleziono ani v1 ani v2
+	return result;
 }
 
 Graph::EdgeList Graph::getShortestPath(const Vertex v1, const Vertex v2)
@@ -159,9 +168,10 @@ Graph::EdgeList Graph::readShortestPath(const Vertex v1, const Vertex v2)
 	return result;
 }
 
-void Graph::generateHTML(const std::string& filename){
-//TODO
-return;
+void Graph::generateHTML(const std::string& filename)
+{
+	//TODO
+	return;
 }
 
 /* DEBUGS */

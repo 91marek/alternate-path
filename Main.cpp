@@ -1,8 +1,7 @@
-#include <boost/graph/graphviz.hpp>
 #include <boost/program_options.hpp>
-#include <boost/graph/adjacency_list.hpp>
 #include <boost/foreach.hpp>
 #include <iostream>
+#include <fstream>
 #include "Graph.hpp"
 
 using namespace boost;
@@ -50,27 +49,31 @@ int main(int argc, const char* argv[])
 	
 	//calculating
 	cout<<"Szukam pomiedzy: "<<source_vertex<< " a "<<target_vertex<<endl;
-	Graph::GraphContainer container = g.getGraphContainer();
-	Graph::EdgeList shortest = g.getShortestPath(source_vertex, target_vertex);
+	Graph::GraphContainer& container = g.getGraphContainer();
+	
+	std::pair<Graph::Vertex, Graph::Vertex> v_desc = g.getVerticesByName(source_vertex, target_vertex);
+	cout<<"Deskryptory: "<<v_desc.first<<" i "<<v_desc.second<<endl;
+	
+	Graph::EdgeList shortest = g.getShortestPath(v_desc.first, v_desc.second);
 	g.setEdgesColor(shortest, Graph::GREEN);// TODO niektore mialy byc na czerwono, bo nie ma zapasowej sciezki
 	g.generateHTML("index.html"); //TODO dobra nazwa pliku?
 	g.setEdgesColor(shortest, Graph::BLACK);
 	
 	BOOST_FOREACH(Graph::Edge e, shortest)
 	{
-		/* get old edge parms */
+		/* get old edge params */
 		Graph::Vertex old_edge_end1, old_edge_end2;
 		old_edge_end1 = source(e, container);
 		old_edge_end2 = target(e, container);
 		double old_edge_weight = get(edge_weight, container, e);
 		string old_edge_name = get(edge_name, container, e);
 	
-		/*remove current edge */
-		cout<<"Usuwam krawed"<<e;
+		/* remove current edge */
+		cout<<"Usuwam krawedz"<<e;
 		remove_edge(old_edge_end1, old_edge_end2, container);
 		g.writeGraph(std::cout);
-		/* find new shortes path */
-		Graph::EdgeList new_shortest = g.getShortestPath(source_vertex, target_vertex);//TODO Znow odwolujemy się po nazwie do wierzcholkow
+		/* find new shortest path */
+		Graph::EdgeList new_shortest = g.getShortestPath(v_desc.first, v_desc.second);
 		g.setEdgesColor(new_shortest, Graph::GREEN);
 		/* restore edge */
 		Graph::Edge restored = add_edge(old_edge_end1, old_edge_end2, container).first;

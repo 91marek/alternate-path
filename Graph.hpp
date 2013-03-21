@@ -52,15 +52,17 @@ public:
 	void writeGraph(ostream& out);
 	void generateHTML(const std::string& filename);//TODO nie wiem nic o parametrach, które tu beda.
 	
-	EdgeList getShortestPath(const string& v1, string& v2);
 	EdgeList getShortestPath(const Vertex v1, const Vertex v2);
 	
 	/* getters */
+	std::pair<Vertex, Vertex> getVerticesByName(const string& v1, const string& v2) const;
+	
 	const std::string& getVertexName(const Vertex v) const
 	{
 		return get(vertex_name, graph, v);
 	}
-	inline GraphContainer& getGraphContainer()
+	
+	GraphContainer& getGraphContainer()
 	{
 		return graph;
 	}
@@ -77,14 +79,15 @@ public:
 	void calculateDistances(const Vertex v1, const Vertex v2);
 	EdgeList readShortestPath(const Vertex v1, const Vertex v2);
 };
-#endif
 
 class CompVertexDist {
-		const Graph::GraphContainer& graph;
-	public:
-		CompVertexDist(const Graph::GraphContainer& g): graph(g) {}
-		bool operator()(const Graph::Vertex v1, const Graph::Vertex v2) const 
-		{
-			return get(vertex_distance, graph, v1) > get(vertex_distance, graph, v2);
-		}
+	const Graph::GraphContainer& graph;
+public:
+	CompVertexDist(const Graph::GraphContainer& g): graph(g) {}
+	bool operator()(const Graph::Vertex v1, const Graph::Vertex v2) const 
+	{
+		return get(vertex_distance, graph, v1) > get(vertex_distance, graph, v2);
+	}
 };
+
+#endif
