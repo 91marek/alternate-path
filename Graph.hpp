@@ -2,11 +2,9 @@
 #define GRAPH_HPP
 
 #include <boost/graph/adjacency_list.hpp>
-#include <iostream>
-#include <queue>
+
 using namespace boost;
 using namespace std;
-
 
 class CompVertexDist;
 
@@ -36,7 +34,6 @@ public:
 	typedef graph_traits<GraphContainer>::edge_iterator EdgeIter;
 	typedef graph_traits<GraphContainer>::out_edge_iterator OutEdgeIter;
 	typedef list<Edge> EdgeList;
-	typedef priority_queue<Vertex, deque<Vertex>, CompVertexDist> VertexDistPriorityQueue;
 	/* constructors etc. */
 	Graph()
 	{}

@@ -3,6 +3,8 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 #include <boost/foreach.hpp>
+#include <algorithm>
+#include <vector>
 
 #include <iostream>
 
@@ -47,48 +49,47 @@ const Graph::GraphContainer& Graph::getGraph()
 Graph::EdgeList Graph::getShortestPath(const Vertex v1, const Vertex v2)
 {
 	calculateDistances(v1, v2);
-	writeGraph(cout);
-	sleep(1);
 	return readShortestPath(v1, v2);
 }
+
 void Graph::calculateDistances(const Vertex v1, const Vertex v2)
 {
-	VertexDistPriorityQueue pq = VertexDistPriorityQueue(CompVertexDist(graph));
+	// priority queue
+	vector<Vertex> pq = vector<Vertex>(num_vertices(graph));
 	/* Reset all vertices to default properties */
 	VertexIter v, v_end;
 	tie(v,v_end) = vertices(graph);
-	for(v; v!=v_end; v++)
+	for(unsigned i=0; v!=v_end; v++, ++i)
 	{
 		put(vertex_distance, graph, *v, numeric_limits<double>::max());
 		put(vertex_predecessor, graph, *v, *v);
-		pq.push(*v);
+		pq[i] = *v;
 	}
+	
 	/* Set length of shortest path from v1 to v1 to 0 */
 	put(vertex_distance, graph, v1, 0);		
 	
-	writeGraph(cout);
 	/* Run algorithm */
 	while(!pq.empty())
 	{
+		std::make_heap(pq.begin(), pq.end(), CompVertexDist(graph));
+		std::pop_heap(pq.begin(), pq.end(), CompVertexDist(graph));
+		Vertex v_source = pq.back();
+		pq.pop_back();
 		cout<<"Rozmiar kolejki: "<<pq.size()<<endl;
-		Vertex v_source = pq.top(); //Vertex with shortest distance to v1
-		pq.pop();
-		cout<<"A";
-		//if(v_source == v2)
-			//break;
-		cout<<"B";
+		if(v_source == v2)
+			break;
 		double source_distance = get(vertex_distance, graph, v_source);
 		
 		if( source_distance == numeric_limits<double>::max() )
 		{
 			//all remaining vertices are inaccessible from source
-			cout<<"Jestem tutej!"<<get(vertex_name, graph, v_source)<<endl;
 			break;
 		}
 		
 		OutEdgeIter e, e_end;
 		tie(e,e_end) = out_edges(v_source, graph);
-		for(e; e!=e_end; ++e){
+		for(; e!=e_end; ++e){
 			Vertex v_target = target(*e, graph);
 			double tmp_edge_weight = get(edge_weight, graph, *e);
 			double target_distance = get(vertex_distance, graph, v_target);
@@ -101,15 +102,12 @@ void Graph::calculateDistances(const Vertex v1, const Vertex v2)
 		}
 	}
 
-	/*Własność Marka
-	 * std::cout << "==============" << std::endl;
+	cout << "Distances:" << endl;
 	tie(v,v_end) = vertices(graph);
-	for(v; v!=v_end; v++)
+	for(; v!=v_end; v++)
 	{
-		std::cout << get(vertex_name, graph, *v) << ": " << get(vertex_distance, graph, *v) << std::endl;
+		cout << get(vertex_name, graph, *v) << ": " << get(vertex_distance, graph, *v) << endl;
 	}
-	std::cout << "==============" << std::endl;
-	*/
 }
 
 Graph::EdgeList Graph::readShortestPath(const Vertex v1, const Vertex v2)
@@ -118,7 +116,6 @@ Graph::EdgeList Graph::readShortestPath(const Vertex v1, const Vertex v2)
 	Vertex v = v2;
 	while(v!=v1)
 	{
-		cout<<"DUPA"<<endl;
 		Vertex new_v = get(vertex_predecessor, graph, v);
 		result.push_front( edge(v, new_v, graph).first );
 		v = new_v;		
@@ -127,14 +124,13 @@ Graph::EdgeList Graph::readShortestPath(const Vertex v1, const Vertex v2)
 	return result;
 	
 }
+
 /* DEBUGS */
 void Graph::DEBUGprint(EdgeList& el)
 {
+	cout<<"Shortest Path:"<<endl;
 	BOOST_FOREACH(Edge &e, el)
 	{
 		cout<<get(vertex_name, graph, source(e, graph))<<"--"<<get(vertex_name, graph, target(e, graph))<<endl;
 	}
-	
 }
-
-
