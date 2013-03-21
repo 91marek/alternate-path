@@ -55,7 +55,7 @@ public:
 	EdgeList getShortestPath(const Vertex v1, const Vertex v2);
 	
 	/* getters */
-	std::pair<Vertex, Vertex> getVerticesByName(const string& v1, const string& v2) const;
+	std::pair<Vertex, Vertex> getVerticesByName(const string& v1, const string& v2) const throw(std::string);
 	
 	const std::string& getVertexName(const Vertex v) const
 	{

@@ -49,7 +49,7 @@ void Graph::setEdgesColor(const EdgeList& el, Color c)
 	}
 }
 
-std::pair<Graph::Vertex, Graph::Vertex> Graph::getVerticesByName(const string& v1, const string& v2) const
+std::pair<Graph::Vertex, Graph::Vertex> Graph::getVerticesByName(const string& v1, const string& v2) const throw(std::string)
 {
 	VertexIter v, v_end;
 	std::pair<Vertex, Vertex> result;
@@ -68,7 +68,7 @@ std::pair<Graph::Vertex, Graph::Vertex> Graph::getVerticesByName(const string& v
 					return result;
 				}
 			}
-			// nie znaleziono v2
+			throw std::string("Vertex \"" + v2 + "\" not found.");
 			return result;
 		}
 		else if(v_name == v2)
@@ -82,12 +82,11 @@ std::pair<Graph::Vertex, Graph::Vertex> Graph::getVerticesByName(const string& v
 					return result;
 				}
 			}
-			// nie znaleziono v1
+			throw std::string("Vertex \"" + v1 + "\" not found.");
 			return result;
 		}
 	}
-	// nie znaleziono ani v1 ani v2
-	return result;
+	throw std::string("Vertices \"" + v1 + "\" and \"" + v2 + "\" not found.");
 }
 
 Graph::EdgeList Graph::getShortestPath(const Vertex v1, const Vertex v2)

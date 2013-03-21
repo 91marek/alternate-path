@@ -44,14 +44,25 @@ int main(int argc, const char* argv[])
 	//reading
 	Graph g;
 	std::ifstream in(filename.c_str());
-	//TODO: check stream
+	if(!in.is_open())
+	{
+		cout<<"Unable to open file "<<filename<<endl;
+		return -1;
+	}
 	g.readGraph(in);
 	
-	//calculating
 	cout<<"Szukam pomiedzy: "<<source_vertex<< " a "<<target_vertex<<endl;
-	Graph::GraphContainer& container = g.getGraphContainer();
 	
-	std::pair<Graph::Vertex, Graph::Vertex> v_desc = g.getVerticesByName(source_vertex, target_vertex);
+	std::pair<Graph::Vertex, Graph::Vertex> v_desc;
+	try
+	{
+		v_desc = g.getVerticesByName(source_vertex, target_vertex);
+	}
+	catch(string err)
+	{
+		cout<<err<<endl;
+		return -1;
+	}
 	cout<<"Deskryptory: "<<v_desc.first<<" i "<<v_desc.second<<endl;
 	
 	Graph::EdgeList shortest = g.getShortestPath(v_desc.first, v_desc.second);
@@ -62,6 +73,7 @@ int main(int argc, const char* argv[])
 	BOOST_FOREACH(Graph::Edge e, shortest)
 	{
 		/* get old edge params */
+		Graph::GraphContainer& container = g.getGraphContainer();
 		Graph::Vertex old_edge_end1, old_edge_end2;
 		old_edge_end1 = source(e, container);
 		old_edge_end2 = target(e, container);
