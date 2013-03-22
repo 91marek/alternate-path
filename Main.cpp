@@ -31,7 +31,7 @@ int main(int argc, const char* argv[])
 		!vm.count("source") || !vm.count("target"))
 	{
 		std::cout << desc << std::endl;
-		return 1;
+		return EXIT_FAILURE;
 	}
 	
 	std::cout << "f: " << filename << "\ns: " << source_vertex << "\nt: " << target_vertex << std::endl;
@@ -47,7 +47,7 @@ int main(int argc, const char* argv[])
 	if(!in.is_open())
 	{
 		cout<<"Unable to open file "<<filename<<endl;
-		return -1;
+		return EXIT_FAILURE;
 	}
 	g.readGraph(in);
 	
@@ -61,13 +61,13 @@ int main(int argc, const char* argv[])
 	catch(string err)
 	{
 		cout<<err<<endl;
-		return -1;
+		return EXIT_FAILURE;
 	}
 	cout<<"Deskryptory: "<<v_desc.first<<" i "<<v_desc.second<<endl;
 	
 	Graph::EdgeList shortest = g.findShortestPath(v_desc.first, v_desc.second);
 	g.setEdgesColor(shortest, Graph::GREEN);// TODO niektore mialy byc na czerwono, bo nie ma zapasowej sciezki
-	g.generateHTML("index.html"); //TODO dobra nazwa pliku? (raczej to trzeba zrobić na koniec)
+	g.generateHTML("index"); //TODO dobra nazwa pliku? (raczej to trzeba zrobić na koniec)
 	g.setEdgesColor(shortest, Graph::BLACK);
 	
 	BOOST_FOREACH(Graph::Edge e, shortest)
@@ -104,5 +104,5 @@ int main(int argc, const char* argv[])
 	//writing
 	//g.writeGraph(std::cout);
 	
-	return 0;
+	return EXIT_SUCCESS;
 }

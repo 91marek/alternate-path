@@ -5,6 +5,7 @@
 #include <boost/foreach.hpp>
 #include <algorithm>
 #include <vector>
+#include <cstdlib> // system()
 
 #include <iostream>
 
@@ -176,6 +177,12 @@ Graph::EdgeList Graph::readShortestPath(const Vertex v1, const Vertex v2)
 
 void Graph::generateHTML(const std::string& filename)
 {
+	ofstream out_dot;
+	out_dot.open((filename + ".dot").c_str());
+	writeGraph(out_dot);
+	out_dot.close();
+	string cmd("neato -Tcmapx -o" + filename + ".map -Tjpg -o" + filename + ".jpg " + filename + ".dot");
+	system(cmd.c_str());
 	//TODO
 	return;
 }
