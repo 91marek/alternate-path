@@ -24,7 +24,7 @@ public:
 	// Graph properties
 	typedef property < graph_name_t, string > GraphProperty;
 	// adjacency_list-based graph type
-    typedef adjacency_list<listS, vecS, undirectedS, VertexProperty, EdgeProperty> GraphContainer;
+	typedef adjacency_list<listS, vecS, undirectedS, VertexProperty, EdgeProperty> GraphContainer;
     
 	/* a bunch of graph-specific typedefs */
 	typedef graph_traits<GraphContainer>::vertex_descriptor Vertex;
