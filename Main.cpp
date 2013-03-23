@@ -44,11 +44,6 @@ int main(int argc, const char* argv[])
 	
 	cout << "f: " << filename << "\ns: " << source_vertex << "\nt: " << target_vertex << endl;
 	
-	// Use ref_property_map to turn a graph property into a property map
-	//boost::ref_property_map<graph_t*,string>
-		//gname(get_property(graph,graph_name));
-	//dp.property("name",gname);
-	
 	//reading
 	Graph g;
 	ifstream in(filename.c_str());
@@ -60,8 +55,6 @@ int main(int argc, const char* argv[])
 	g.readGraph(in);
 	in.close();
 	
-	cout<<"Szukam pomiedzy: "<<source_vertex<< " a "<<target_vertex<<endl;
-	
 	pair<Graph::Vertex, Graph::Vertex> v_desc;
 	try
 	{
@@ -72,59 +65,66 @@ int main(int argc, const char* argv[])
 		cout<<err<<endl;
 		return EXIT_FAILURE;
 	}
-	cout<<"Deskryptory: "<<v_desc.first<<" i "<<v_desc.second<<endl;
 	
 	/* find reference path */
 	Graph::EdgeList shortest = g.findShortestPath(v_desc.first, v_desc.second);
 	Graph::EdgeList red_list = Graph::EdgeList();
 	Graph::EdgeList green_list = Graph::EdgeList();
 	
-	unsigned i=0;
-	BOOST_FOREACH(Graph::Edge e, shortest)
+	try
 	{
-		/* get current edge params */
-		Graph::Vertex curr_edge_end1 = g.getSourceVertex(e);
-		Graph::Vertex curr_edge_end2 = g.getTargetVertex(e);
-		double curr_edge_weight = g.getEdgeWeight(e);
+		unsigned i=0;
+		BOOST_FOREACH(Graph::Edge e, shortest)
+		{
+			/* get current edge params */
+			Graph::Vertex curr_edge_end1 = g.getSourceVertex(e);
+			Graph::Vertex curr_edge_end2 = g.getTargetVertex(e);
+			double curr_edge_weight = g.getEdgeWeight(e);
 	
-		/* remove current edge */
-		cout<<"Usuwam krawedz: ("<<g.getVertexName(curr_edge_end1)<<", "
-			<<g.getVertexName(curr_edge_end2)<<")"<<endl;
-		g.removeEdge(curr_edge_end1, curr_edge_end2);
-		//g.writeGraph(cout);
+			/* remove current edge */
+			cout<<"I remove the edge: ("<<g.getVertexName(curr_edge_end1)<<", "
+				<<g.getVertexName(curr_edge_end2)<<")"<<endl;
+			g.removeEdge(curr_edge_end1, curr_edge_end2);
+			//g.writeGraph(cout);
 		
-		/* find new shortest path */
-		Graph::EdgeList new_shortest = g.findShortestPath(v_desc.first, v_desc.second);
+			/* find new shortest path */
+			Graph::EdgeList new_shortest = g.findShortestPath(v_desc.first, v_desc.second);
 		
-		/* restore current edge */
-		Graph::Edge restored = g.addEdge(curr_edge_end1, curr_edge_end2);
-		g.setEdgeWeight(restored, curr_edge_weight);
+			/* restore current edge */
+			Graph::Edge restored = g.addEdge(curr_edge_end1, curr_edge_end2);
+			g.setEdgeWeight(restored, curr_edge_weight);
 		
-		if(new_shortest.empty()) // current edge is bridge (will be red only in main picture)
-		{
-			red_list.push_back(restored);
-			g.setEdgeURL(restored, "");
-			g.setEdgeColor(restored, Graph::BLACK);
+			if(new_shortest.empty()) // current edge is bridge (will be red only in main picture)
+			{
+				red_list.push_back(restored);
+				g.setEdgeURL(restored, "");
+				g.setEdgeColor(restored, Graph::BLACK);
+			}
+			else // current edge has alternatives
+			{
+				green_list.push_back(restored);
+				g.setEdgeURL(restored, "index.html");
+				g.setEdgeColor(restored, Graph::BLUE);	// blue broken edge
+				g.setEdgesColor(new_shortest, Graph::GREEN);	// green alternate path
+				g.generateHTML("path" + lexical_cast<string>(++i));	// i starts from 1
+				/* clean all up */
+				g.setEdgeURL(restored, "");
+				g.setEdgeColor(restored, Graph::BLACK);
+				g.setEdgesColor(new_shortest, Graph::BLACK);
+			}
 		}
-		else // current edge has alternatives
-		{
-			green_list.push_back(restored);
-			g.setEdgeURL(restored, "index.html");
-			g.setEdgeColor(restored, Graph::BLUE);	// blue broken edge
-			g.setEdgesColor(new_shortest, Graph::GREEN);	// green alternate path
-			g.generateHTML("path" + lexical_cast<string>(++i));	// i starts from 1
-			/* clean all up */
-			g.setEdgeURL(restored, "");
-			g.setEdgeColor(restored, Graph::BLACK);
-			g.setEdgesColor(new_shortest, Graph::BLACK);
-		}
+	
+		/* prepare and save main picture */
+		g.setEdgesColor(red_list, Graph::RED);
+		g.setEdgesColor(green_list, Graph::GREEN);
+		g.setEdgesURL(green_list, "path", 1);
+		g.generateHTML("index");
 	}
-	
-	/* prepare and save main picture */
-	g.setEdgesColor(red_list, Graph::RED);
-	g.setEdgesColor(green_list, Graph::GREEN);
-	g.setEdgesURL(green_list, "path", 1);
-	g.generateHTML("index");
+	catch(const string& err)
+	{
+		cout<<err<<endl;
+		return EXIT_FAILURE;
+	}
 	
 	return EXIT_SUCCESS;
 }

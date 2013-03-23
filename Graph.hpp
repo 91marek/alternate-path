@@ -49,10 +49,7 @@ public:
 	/* read & write */
 	void readGraph(istream& in);
 	void writeGraph(ostream& out);
-	void generateHTML(const string& filename);//TODO nie wiem nic o parametrach, które tu beda.
-	
-	/* Dijkstra-based algorithm */
-	EdgeList findShortestPath(const Vertex v1, const Vertex v2);
+	void generateHTML(const string& base_name) throw(string);
 	
 	/* getters */
 	pair<Vertex, Vertex> getVerticesByName(const string& v1, const string& v2) const throw(string);
@@ -99,19 +96,22 @@ public:
 	}
 	
 	/* add & remove edge */
-	Edge addEdge(const Vertex& v1, const Vertex& v2)
+	Edge addEdge(const Vertex v1, const Vertex v2)
 	{
-		// TODO: czy potrzebna jest informacja o tym czy udało się dodać (second)? chyba nie
 		return add_edge(v1, v2, graph).first;
 	}
 	
-	void removeEdge(const Vertex& v1, const Vertex& v2)
+	void removeEdge(const Vertex v1, const Vertex v2)
 	{
 		remove_edge(v1, v2, graph);
 	}
 	
+	/* Dijkstra-based algorithm */
+	EdgeList findShortestPath(const Vertex v1, const Vertex v2);
+	
 	/* DEBUG */
 	void DEBUGprint(EdgeList& e);
+	void DEBUGprint2();
 private:
 	GraphContainer graph;
 	
