@@ -1,15 +1,14 @@
 #include "Graph.hpp"
 #include <boost/graph/graphviz.hpp>
-#include <boost/bind.hpp>
-#include <boost/function.hpp>
 #include <boost/foreach.hpp>
-#include <algorithm>
+#include <boost/lexical_cast.hpp>
+#include <algorithm>	// make_heap() etc.
 #include <vector>
 #include <cstdlib> // system()
 
 #include <iostream>
 
-void Graph::readGraph(std::istream& in)
+void Graph::readGraph(istream& in)
 {
 	dynamic_properties dp;
 	dp.property("node_id", get(vertex_name, graph));
@@ -17,13 +16,13 @@ void Graph::readGraph(std::istream& in)
 	read_graphviz(in, graph, dp);
 }
 
-void Graph::writeGraph(std::ostream& out)
+void Graph::writeGraph(ostream& out)
 {
 	dynamic_properties dp;
 	dp.property("node_id", get(vertex_name, graph));
-	dp.property("predecessor", get(vertex_predecessor, graph));
-	dp.property("dist", get(vertex_distance, graph));
-	dp.property("weight", get(edge_weight, graph));
+	//dp.property("predecessor", get(vertex_predecessor, graph));
+	//dp.property("dist", get(vertex_distance, graph));
+	dp.property("label", get(edge_weight, graph));//dp.property("weight", get(edge_weight, graph));
 	dp.property("color", get(edge_color, graph));
 	dp.property("URL", get(edge_name, graph));
 	write_graphviz_dp(out, graph, dp);
@@ -31,7 +30,7 @@ void Graph::writeGraph(std::ostream& out)
 
 void Graph::setEdgeColor(const Edge& e, Color c)
 {
-	std::string color;
+	string color;
 	switch(c)
 	{
 		case RED: color = "red"; break;
@@ -50,10 +49,18 @@ void Graph::setEdgesColor(const EdgeList& el, Color c)
 	}
 }
 
-std::pair<Graph::Vertex, Graph::Vertex> Graph::getVerticesByName(const string& v1, const string& v2) const throw(std::string)
+void Graph::setEdgesURL(const EdgeList& el, const string& base_name, unsigned starting_postfix)
+{
+	BOOST_FOREACH(Edge e, el)
+	{
+		setEdgeURL(e, base_name + lexical_cast<string>(starting_postfix++) + ".html");
+	}
+}
+
+pair<Graph::Vertex, Graph::Vertex> Graph::getVerticesByName(const string& v1, const string& v2) const throw(string)
 {
 	VertexIter v, v_end;
-	std::pair<Vertex, Vertex> result;
+	pair<Vertex, Vertex> result;
 	tie(v, v_end) = vertices(graph);
 	for(; v != v_end; ++v)
 	{
@@ -69,7 +76,7 @@ std::pair<Graph::Vertex, Graph::Vertex> Graph::getVerticesByName(const string& v
 					return result;
 				}
 			}
-			throw std::string("Vertex \"" + v2 + "\" not found.");
+			throw string("Vertex \"" + v2 + "\" not found.");
 			return result;
 		}
 		else if(v_name == v2)
@@ -83,11 +90,11 @@ std::pair<Graph::Vertex, Graph::Vertex> Graph::getVerticesByName(const string& v
 					return result;
 				}
 			}
-			throw std::string("Vertex \"" + v1 + "\" not found.");
+			throw string("Vertex \"" + v1 + "\" not found.");
 			return result;
 		}
 	}
-	throw std::string("Vertices \"" + v1 + "\" and \"" + v2 + "\" not found.");
+	throw string("Vertices \"" + v1 + "\" and \"" + v2 + "\" not found.");
 }
 
 Graph::EdgeList Graph::findShortestPath(const Vertex v1, const Vertex v2)
@@ -118,22 +125,23 @@ bool Graph::computeDistances(const Vertex v1, const Vertex v2)
 	/* Run algorithm */
 	while(!pq.empty())
 	{
-		std::make_heap(pq.begin(), pq.end(), CompVertexDist(graph));
-		std::pop_heap(pq.begin(), pq.end(), CompVertexDist(graph));
+		make_heap(pq.begin(), pq.end(), CompVertexDist(graph));
+		pop_heap(pq.begin(), pq.end(), CompVertexDist(graph));
 		Vertex v_source = pq.back();
 		pq.pop_back();
-		//cout<<"Rozmiar kolejki: "<<pq.size()<<endl;
+		
+		double source_distance = get(vertex_distance, graph, v_source);
+		
+		if(source_distance == numeric_limits<double>::max())
+		{
+			//all remaining vertices are inaccessible from v1
+			return false;
+		}
+		
 		if(v_source == v2)
 		{
 			//target vertex encountered
 			break;
-		}
-		double source_distance = get(vertex_distance, graph, v_source);
-		
-		if( source_distance == numeric_limits<double>::max() )
-		{
-			//all remaining vertices are inaccessible from v1
-			return false;
 		}
 		
 		OutEdgeIter e, e_end;
@@ -175,16 +183,44 @@ Graph::EdgeList Graph::readShortestPath(const Vertex v1, const Vertex v2)
 	return result;
 }
 
-void Graph::generateHTML(const std::string& filename)
+void Graph::generateHTML(const string& filename)
 {
+	// write dot file
 	ofstream out_dot;
 	out_dot.open((filename + ".dot").c_str());
+	if(!out_dot.is_open())
+	{
+		;//exception?
+	}
 	writeGraph(out_dot);
 	out_dot.close();
-	string cmd("neato -Tcmapx -o" + filename + ".map -Tjpg -o" + filename + ".jpg " + filename + ".dot");
+	
+	// generate map and gif file
+	string cmd("neato -Tcmapx -o" + filename + ".map -Tgif -o" + filename + ".gif " + filename + ".dot");
+	cout<<"cmd: "<<cmd<<endl;
 	system(cmd.c_str());
-	//TODO
-	return;
+	
+	// write html file
+	ofstream out_html;
+	out_html.open((filename + ".html").c_str());
+	if(!out_html.is_open())
+	{
+		;//exception?
+	}
+	out_html<<"<IMG SRC=" + filename + ".gif USEMAP=\"#G\" />"<<endl;
+	ifstream in_map;
+	in_map.open((filename + ".map").c_str());
+	if(!in_map.is_open())
+	{
+		;//exception?
+	}
+	istreambuf_iterator<char> src(in_map.rdbuf());
+	istreambuf_iterator<char> end;
+	ostream_iterator<char> dest(out_html);
+	copy(src, end, dest);
+	in_map.close();
+	// TODO: here the map file can be removed, but shall we do it?
+	out_html.close();
 }
 
 /* DEBUGS */

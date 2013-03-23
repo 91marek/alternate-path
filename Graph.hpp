@@ -14,15 +14,15 @@ public:
 	typedef adjacency_list_traits<listS, vecS, undirectedS>::vertex_descriptor vertex_descriptor_tmp;
 	
 	// Vertex properties
-	typedef property < vertex_name_t, std::string,
+	typedef property < vertex_name_t, string,
 			property < vertex_distance_t, double,
 			property < vertex_predecessor_t, vertex_descriptor_tmp > > > VertexProperty;
 	// Edge properties
 	typedef property < edge_weight_t, double,
-			property < edge_color_t, std::string,
-			property < edge_name_t, std::string > > > EdgeProperty;
+			property < edge_color_t, string,
+			property < edge_name_t, string > > > EdgeProperty;
 	// Graph properties
-	typedef property < graph_name_t, std::string > GraphProperty;
+	typedef property < graph_name_t, string > GraphProperty;
 	// adjacency_list-based graph type
     typedef adjacency_list<listS, vecS, undirectedS, VertexProperty, EdgeProperty> GraphContainer;
     
@@ -49,14 +49,15 @@ public:
 	/* read & write */
 	void readGraph(istream& in);
 	void writeGraph(ostream& out);
-	void generateHTML(const std::string& filename);//TODO nie wiem nic o parametrach, które tu beda.
+	void generateHTML(const string& filename);//TODO nie wiem nic o parametrach, które tu beda.
 	
+	/* Dijkstra-based algorithm */
 	EdgeList findShortestPath(const Vertex v1, const Vertex v2);
 	
 	/* getters */
-	std::pair<Vertex, Vertex> getVerticesByName(const string& v1, const string& v2) const throw(std::string);
+	pair<Vertex, Vertex> getVerticesByName(const string& v1, const string& v2) const throw(string);
 	
-	const std::string& getVertexName(const Vertex& v) const
+	const string& getVertexName(const Vertex& v) const
 	{
 		return get(vertex_name, graph, v);
 	}
@@ -76,7 +77,7 @@ public:
 		return get(edge_weight, graph, e);
 	}
 	
-	const std::string& getEdgeURL(const Edge& e) const
+	const string& getEdgeURL(const Edge& e) const
 	{
 		return get(edge_name, graph, e);
 	}
@@ -85,13 +86,14 @@ public:
 	enum Color{RED, GREEN, BLUE, BLACK};
 	void setEdgeColor(const Edge& e, Color c);
 	void setEdgesColor(const EdgeList& el, Color c);
+	void setEdgesURL(const EdgeList& el, const string& base_name, unsigned starting_postfix);
 	
 	void setEdgeWeight(const Edge& e, double weight)
 	{
 		put(edge_weight, graph, e, weight);
 	}
 	
-	void setEdgeURL(const Edge& e, const std::string& url)
+	void setEdgeURL(const Edge& e, const string& url)
 	{
 		put(edge_name, graph, e, url);
 	}
