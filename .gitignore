@@ -22,3 +22,12 @@ ap
 *.out
 *.toc
 *.synctex.gz
+
+# HTML files
+*.map
+index.gif
+path*.gif
+*.html
+index.dot
+path*.dot
+
