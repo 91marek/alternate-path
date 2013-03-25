@@ -66,6 +66,36 @@ void Graph::generateHTML(const string& base_name) throw(string)
 	out_html.close();
 }
 
+void Graph::newReportFile(const EdgeList& el)
+{
+	report.open ("report.txt", fstream::out | fstream::trunc);
+	report << "Shortest path: ";
+	double cost = 0;
+	BOOST_FOREACH(Edge e, el)
+	{
+		report << getVertexName(source(e, graph)) << "--" << getVertexName(target(e, graph)) << "  ";
+		cost += getEdgeWeight(e);
+	}
+	report << " Cost: "<< cost << endl;
+	return;
+}
+void Graph::appendBridgeLine(Vertex v1, Vertex v2)
+{
+	report << getVertexName(v1) << "--" << getVertexName(v2)<<" | No emergency path"<<endl;
+	
+}
+void Graph::appendEmergencyLine(Vertex v1, Vertex v2, const EdgeList& el)
+{
+	report << getVertexName(v1) << "--" << getVertexName(v2)<<" | ";
+	double cost = 0;
+	BOOST_FOREACH(Edge e, el)
+	{
+		report << getVertexName(source(e, graph)) << "--" << getVertexName(target(e, graph)) << "  ";
+		cost += getEdgeWeight(e);
+	}
+	report << " Cost: "<< cost << endl;
+}
+
 pair<Graph::Vertex, Graph::Vertex> Graph::getVerticesByName(const string& v1, const string& v2) const throw(string)
 {
 	VertexIter v, v_end;

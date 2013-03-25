@@ -70,12 +70,13 @@ int main(int argc, const char* argv[])
 	Graph::EdgeList green_list = Graph::EdgeList();
 	
 	/* there is no path between given vertexes */
-	if (shortest.size() == 0)
+	if ( shortest.empty() )
 	{
 		cerr<<"There is no path between "<< source_vertex << " and " << target_vertex<<endl;
 		return EXIT_FAILURE;
 	}
 	system ("make clear"); 	//TODO for windows probably it won't work
+	g.newReportFile(shortest);
 	try
 	{
 		unsigned i=0;
@@ -87,8 +88,6 @@ int main(int argc, const char* argv[])
 			double curr_edge_weight = g.getEdgeWeight(e);
 	
 			/* remove current edge */
-			//cout<<"I remove the edge: ("<<g.getVertexName(curr_edge_end1)<<", "
-				//<<g.getVertexName(curr_edge_end2)<<")"<<endl;
 			g.removeEdge(curr_edge_end1, curr_edge_end2);
 		
 			/* find new shortest path */
@@ -103,6 +102,7 @@ int main(int argc, const char* argv[])
 				red_list.push_back(restored);
 				g.setEdgeURL(restored, "");
 				g.setEdgeColor(restored, Graph::BLACK);
+				g.appendBridgeLine(curr_edge_end1, curr_edge_end2);
 			}
 			else // current edge has alternatives
 			{
@@ -111,6 +111,7 @@ int main(int argc, const char* argv[])
 				g.setEdgeColor(restored, Graph::BLUE);	// blue broken edge
 				g.setEdgesColor(new_shortest, Graph::GREEN);	// green alternate path
 				g.generateHTML("path" + lexical_cast<string>(++i));	// i starts from 1
+				g.appendEmergencyLine(curr_edge_end1, curr_edge_end2, new_shortest);
 				/* clean all up */
 				g.setEdgeURL(restored, "");
 				g.setEdgeColor(restored, Graph::BLACK);

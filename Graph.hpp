@@ -2,7 +2,7 @@
 #define GRAPH_HPP
 
 #include <boost/graph/adjacency_list.hpp>
-
+#include <fstream>
 using namespace boost;
 using namespace std;
 
@@ -44,12 +44,17 @@ public:
 	{}
 
 	virtual ~Graph()
-	{}
+	{
+		report.close();
+	}
 	
 	/* read & write */
 	void readGraph(istream& in);
 	void writeGraph(ostream& out);
 	void generateHTML(const string& base_name) throw(string);
+	void newReportFile(const EdgeList& el);
+	void appendBridgeLine(Vertex v1, Vertex v2);
+	void appendEmergencyLine(Vertex v1, Vertex v2, const EdgeList& el);
 	
 	/* getters */
 	pair<Vertex, Vertex> getVerticesByName(const string& v1, const string& v2) const throw(string);
@@ -115,6 +120,7 @@ public:
 	void DEBUGprint2();
 private:
 	GraphContainer graph;
+	fstream report;
 	
 	bool computeDistances(const Vertex v1, const Vertex v2);
 	EdgeList readShortestPath(const Vertex v1, const Vertex v2);
