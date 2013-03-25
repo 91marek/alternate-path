@@ -32,24 +32,22 @@ int main(int argc, const char* argv[])
 	if(vm.count("help") || !vm.count("file") ||
 		!vm.count("source") || !vm.count("target"))
 	{
-		cout << desc << endl;
+		cerr << desc << endl;
 		return EXIT_FAILURE;
 	}
 	
 	if(source_vertex == target_vertex)
 	{
-		cout<<"Source vertex must be different from target vertex."<<endl;
+		cerr<<"Source vertex must be different from target vertex."<<endl;
 		return EXIT_FAILURE;
 	}
-	
-	cout << "f: " << filename << "\ns: " << source_vertex << "\nt: " << target_vertex << endl;
 	
 	//reading
 	Graph g;
 	ifstream in(filename.c_str());
 	if(!in.is_open())
 	{
-		cout<<"Unable to open file \""<<filename<<"\"."<<endl;
+		cerr<<"Unable to open file \""<<filename<<"\"."<<endl;
 		return EXIT_FAILURE;
 	}
 	g.readGraph(in);
@@ -62,7 +60,7 @@ int main(int argc, const char* argv[])
 	}
 	catch(const string& err)
 	{
-		cout<<err<<endl;
+		cerr<<err<<endl;
 		return EXIT_FAILURE;
 	}
 	
@@ -71,6 +69,13 @@ int main(int argc, const char* argv[])
 	Graph::EdgeList red_list = Graph::EdgeList();
 	Graph::EdgeList green_list = Graph::EdgeList();
 	
+	/* there is no path between given vertexes */
+	if (shortest.size() == 0)
+	{
+		cerr<<"There is no path between "<< source_vertex << " and " << target_vertex<<endl;
+		return EXIT_FAILURE;
+	}
+	system ("make clear"); 	//TODO for windows probably it won't work
 	try
 	{
 		unsigned i=0;
@@ -82,10 +87,9 @@ int main(int argc, const char* argv[])
 			double curr_edge_weight = g.getEdgeWeight(e);
 	
 			/* remove current edge */
-			cout<<"I remove the edge: ("<<g.getVertexName(curr_edge_end1)<<", "
-				<<g.getVertexName(curr_edge_end2)<<")"<<endl;
+			//cout<<"I remove the edge: ("<<g.getVertexName(curr_edge_end1)<<", "
+				//<<g.getVertexName(curr_edge_end2)<<")"<<endl;
 			g.removeEdge(curr_edge_end1, curr_edge_end2);
-			//g.writeGraph(cout);
 		
 			/* find new shortest path */
 			Graph::EdgeList new_shortest = g.findShortestPath(v_desc.first, v_desc.second);
@@ -122,7 +126,8 @@ int main(int argc, const char* argv[])
 	}
 	catch(const string& err)
 	{
-		cout<<err<<endl;
+		cerr<<err<<endl;
+		system ("make clear"); //TODO for windows probably it won't work
 		return EXIT_FAILURE;
 	}
 	

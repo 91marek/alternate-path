@@ -179,7 +179,7 @@ bool Graph::computeDistances(const Vertex v1, const Vertex v2)
 		if(v_source == v2)
 		{
 			//target vertex encountered
-			DEBUGprint2();
+			//DEBUGprint2();
 			return true;
 		}
 		
@@ -211,7 +211,7 @@ Graph::EdgeList Graph::readShortestPath(const Vertex v1, const Vertex v2)
 		result.push_front( edge(v, new_v, graph).first );
 		v = new_v;		
 	}
-	DEBUGprint(result);
+	//DEBUGprint(result);
 	return result;
 }
 

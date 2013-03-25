@@ -83,6 +83,11 @@ public:
 	enum Color{RED, GREEN, BLUE, BLACK};
 	void setEdgeColor(const Edge& e, Color c);
 	void setEdgesColor(const EdgeList& el, Color c);
+	
+	void setEdgeURL(const Edge& e, const string& url)
+	{
+		put(edge_name, graph, e, url);
+	}
 	void setEdgesURL(const EdgeList& el, const string& base_name, unsigned starting_postfix);
 	
 	void setEdgeWeight(const Edge& e, double weight)
@@ -90,10 +95,6 @@ public:
 		put(edge_weight, graph, e, weight);
 	}
 	
-	void setEdgeURL(const Edge& e, const string& url)
-	{
-		put(edge_name, graph, e, url);
-	}
 	
 	/* add & remove edge */
 	Edge addEdge(const Vertex v1, const Vertex v2)
