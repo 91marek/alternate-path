@@ -52,7 +52,7 @@ void Graph::generateHTML(const string& base_name) throw(string)
 	}
 	out_html<<"<FONT COLOR=\"green\"><b>-- Shortest path &nbsp</FONT>"<<endl;
 	out_html<<"<FONT COLOR=\"red\">-- Critical edges (without emergency path) on shortest path &nbsp</FONT>"<<endl;
-	out_html<<"<FONT COLOR=\"blue\">-- Edges marked as broken</b></FONT>"<<endl;
+	out_html<<"<FONT COLOR=\"blue\">-- Edge marked as broken</b></FONT>"<<endl;
 	out_html<<"<IMG SRC=" + base_name + ".gif USEMAP=\"#G\" />"<<endl;
 	ifstream in_map;
 	in_map.open((base_name + ".map").c_str());
