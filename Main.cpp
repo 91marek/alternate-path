@@ -69,13 +69,13 @@ int main(int argc, const char* argv[])
 	Graph::EdgeList red_list = Graph::EdgeList();
 	Graph::EdgeList green_list = Graph::EdgeList();
 	
-	/* there is no path between given vertexes */
+	/* there is no path between given vertices */
 	if ( shortest.empty() )
 	{
-		cerr<<"There is no path between "<< source_vertex << " and " << target_vertex<<endl;
+		cerr<<"There is no path between \""<<source_vertex<<"\" and \""<<target_vertex<<"\"."<<endl;
 		return EXIT_FAILURE;
 	}
-	system ("make clear"); 	//TODO for windows probably it won't work
+	system ("make clear"); // for windows probably it won't work
 	g.newReportFile(shortest);
 	try
 	{
@@ -128,7 +128,7 @@ int main(int argc, const char* argv[])
 	catch(const string& err)
 	{
 		cerr<<err<<endl;
-		system ("make clear"); //TODO for windows probably it won't work
+		system ("make clear"); // for windows probably it won't work
 		return EXIT_FAILURE;
 	}
 	

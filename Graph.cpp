@@ -50,6 +50,9 @@ void Graph::generateHTML(const string& base_name) throw(string)
 	{
 		throw string("Unable to open file \"" + base_name + ".html\".");
 	}
+	out_html<<"<FONT COLOR=\"green\"><b>-- Shortest path &nbsp</FONT>"<<endl;
+	out_html<<"<FONT COLOR=\"red\">-- Critical edges (without emergency path) on shortest path &nbsp</FONT>"<<endl;
+	out_html<<"<FONT COLOR=\"blue\">-- Edges marked as broken</b></FONT>"<<endl;
 	out_html<<"<IMG SRC=" + base_name + ".gif USEMAP=\"#G\" />"<<endl;
 	ifstream in_map;
 	in_map.open((base_name + ".map").c_str());
@@ -76,24 +79,25 @@ void Graph::newReportFile(const EdgeList& el)
 		report << getVertexName(source(e, graph)) << "--" << getVertexName(target(e, graph)) << "  ";
 		cost += getEdgeWeight(e);
 	}
-	report << " Cost: "<< cost << endl;
+	report << " Cost: " << cost << endl;
 	return;
 }
+
 void Graph::appendBridgeLine(Vertex v1, Vertex v2)
 {
-	report << getVertexName(v1) << "--" << getVertexName(v2)<<" | No emergency path"<<endl;
-	
+	report << getVertexName(v1) << "--" << getVertexName(v2) << " | No emergency path" << endl;
 }
+
 void Graph::appendEmergencyLine(Vertex v1, Vertex v2, const EdgeList& el)
 {
-	report << getVertexName(v1) << "--" << getVertexName(v2)<<" | ";
+	report << getVertexName(v1) << "--" << getVertexName(v2) << " | ";
 	double cost = 0;
 	BOOST_FOREACH(Edge e, el)
 	{
 		report << getVertexName(source(e, graph)) << "--" << getVertexName(target(e, graph)) << "  ";
 		cost += getEdgeWeight(e);
 	}
-	report << " Cost: "<< cost << endl;
+	report << " Cost: " << cost << endl;
 }
 
 pair<Graph::Vertex, Graph::Vertex> Graph::getVerticesByName(const string& v1, const string& v2) const throw(string)

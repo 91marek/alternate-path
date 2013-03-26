@@ -31,3 +31,5 @@ path*.gif
 index.dot
 path*.dot
 
+# report file
+report.txt

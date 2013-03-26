@@ -100,7 +100,6 @@ public:
 		put(edge_weight, graph, e, weight);
 	}
 	
-	
 	/* add & remove edge */
 	Edge addEdge(const Vertex v1, const Vertex v2)
 	{
