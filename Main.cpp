@@ -71,7 +71,16 @@ int main(int argc, const char* argv[])
 		cerr<<"Unable to open file \""<<filename<<"\"."<<endl;
 		return EXIT_FAILURE;
 	}
-	g.readGraph(in);
+	try
+	{
+		g.readGraph(in);
+	}
+	catch(std::exception& e)
+	{
+		cerr << "Error while reading graph file occurred:" << endl;
+		cerr << e.what() << endl;
+		return EXIT_FAILURE;
+	}
 	in.close();
 	
 	pair<Graph::Vertex, Graph::Vertex> v_desc;
