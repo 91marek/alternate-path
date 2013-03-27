@@ -77,16 +77,7 @@ void Graph::newReportFile(const string& outdir, Vertex v_source, Vertex v_target
 {
 	report.open(filePath(outdir, "report.txt").c_str(), fstream::out | fstream::trunc);
 	report << "Shortest path: ";
-	double cost;
-	VertexList shortest;
-	tie(shortest, cost) =  readShortestVertexPath(v_source, v_target);
-	string path="";
-	BOOST_FOREACH(Vertex v, shortest)
-	{
-		path+=getVertexName(v) + "--";
-	}
-	report << path.substr(0, path.length()-2)<<" Cost: " << cost << endl;
-	return;
+	appendLine(v_source, v_target);
 }
 
 void Graph::appendBridgeLine(Vertex v1, Vertex v2)
@@ -97,6 +88,11 @@ void Graph::appendBridgeLine(Vertex v1, Vertex v2)
 void Graph::appendEmergencyLine(Vertex v1, Vertex v2, Vertex v_source, Vertex v_target)
 {
 	report << getVertexName(v1) << "--" << getVertexName(v2) << " | ";
+	appendLine(v_source, v_target);
+}
+
+void Graph::appendLine(Vertex v_source, Vertex v_target)
+{
 	double cost;
 	VertexList shortest;
 	tie(shortest, cost) = readShortestVertexPath(v_source, v_target);
@@ -105,8 +101,7 @@ void Graph::appendEmergencyLine(Vertex v1, Vertex v2, Vertex v_source, Vertex v_
 	{
 		path+=getVertexName(v) + "--";
 	}
-	report << path.substr(0, path.length()-2)<<" Cost: " << cost << endl;
-	return;
+	report << path.substr(0, path.length()-2) << " Cost: " << cost << endl;
 }
 
 pair<Graph::Vertex, Graph::Vertex> Graph::getVerticesByName(const string& v1, const string& v2) const throw(string)
