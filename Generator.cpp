@@ -5,7 +5,10 @@
 #include <fstream>
 #include "Graph.hpp"
 #include <map>
+#include <vector>
 #include <boost/graph/graphviz.hpp>
+#include <stdlib.h>     /* srand, rand */
+#include <time.h> 
 
 using namespace std;
 using namespace boost;
@@ -18,7 +21,7 @@ typedef property < vertex_name_t, int> VertexProperty;
 // Edge properties
 typedef property < edge_weight_t, double > EdgeProperty;
 // adjacency_list-based graph type
-typedef adjacency_list<listS, vecS, undirectedS, VertexProperty, EdgeProperty> GraphContainer;
+typedef adjacency_list<setS, vecS, undirectedS, VertexProperty, EdgeProperty> GraphContainer;
 
 /* a bunch of graph-specific typedefs */
 typedef graph_traits<GraphContainer>::vertex_descriptor Vertex;
@@ -31,6 +34,7 @@ typedef map<int, Vertex> VertexMap;
 
 int main(int argc, const char* argv[])
 {
+	srand (time(NULL));
 	int n, e;
 	double prob;
 	string filename;
@@ -56,6 +60,12 @@ int main(int argc, const char* argv[])
 		cerr << desc << endl;
 		return EXIT_FAILURE;
 	}
+	ofstream result(filename.c_str());
+	if(!result.is_open())
+	{
+		cerr<<"Unable to open file \""<<filename<<"\"."<<endl;
+		return EXIT_FAILURE;
+	}
 	GraphContainer graph;
 	for(int i = 0; i<n; ++i) //For num of vertexes
 	{
@@ -66,14 +76,36 @@ int main(int argc, const char* argv[])
 	{
 		for(int j =i+1; j<i+1+e; ++j)//For num of edges to create
 		{
-			add_edge(vertexes[i], vertexes[j%n], graph);
+			Edge new_e = add_edge(vertexes[i], vertexes[j%n], graph).first;
+			put(edge_weight, graph, new_e, 1);
 			
 		}
 	}
+	EdgeIter ei, ei_end;
+	vector<Edge> edge_vec;
+	for (tie(ei, ei_end) = edges(graph); ei != ei_end; ++ei)
+	{
+		edge_vec.push_back(*ei);
+	}
 	
+	BOOST_FOREACH(Edge& e, edge_vec)
+	{
+		if(rand() % 100 < prob)
+		{	
+			Vertex v_sour = source(e, graph);
+			Vertex v_targ = target(e, graph);
+			Vertex new_targ = vertexes[rand()%n];
+			while( new_targ == v_sour)
+				new_targ = vertexes[rand()%n];
+			remove_edge(e, graph);
+			Edge new_e = add_edge(v_sour, new_targ, graph).first;
+			put(edge_weight, graph, new_e, 1);
+		}
+	}
 	
 	dynamic_properties dp;
 	dp.property("node_id", get(vertex_name, graph));
-	write_graphviz_dp(cout, graph, dp);
+	dp.property("weight", get(edge_weight, graph));
+	write_graphviz_dp(result, graph, dp);
 	return EXIT_SUCCESS;
 }

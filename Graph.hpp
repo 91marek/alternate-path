@@ -11,7 +11,7 @@ class CompVertexDist;
 class Graph
 {
 public:
-	typedef adjacency_list_traits<listS, vecS, undirectedS>::vertex_descriptor vertex_descriptor_tmp;
+	typedef adjacency_list_traits<setS, vecS, undirectedS>::vertex_descriptor vertex_descriptor_tmp;
 	
 	// Vertex properties
 	typedef property < vertex_name_t, string,
@@ -24,7 +24,7 @@ public:
 	// Graph properties
 	typedef property < graph_name_t, string > GraphProperty;
 	// adjacency_list-based graph type
-	typedef adjacency_list<listS, vecS, undirectedS, VertexProperty, EdgeProperty> GraphContainer;
+	typedef adjacency_list<setS, vecS, undirectedS, VertexProperty, EdgeProperty> GraphContainer;
     
 	/* a bunch of graph-specific typedefs */
 	typedef graph_traits<GraphContainer>::vertex_descriptor Vertex;
