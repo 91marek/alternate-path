@@ -1,6 +1,7 @@
 #include <boost/program_options.hpp>
 #include <boost/foreach.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/filesystem.hpp>	// create_directory()
 #include <iostream>
 #include <fstream>
 #include "Graph.hpp"
@@ -14,6 +15,7 @@ int main(int argc, const char* argv[])
 	string filename;
 	string source_vertex;
 	string target_vertex;
+	string outdir;
 
 	// Declare the supported options.
 	options_description desc("Usage: " + string(argv[0]) + " [options]\nOptions:");
@@ -22,6 +24,7 @@ int main(int argc, const char* argv[])
 		("file,f", value<string>(&filename), "Input graph filename")
 		("source,s", value<string>(&source_vertex), "Source vertex name")
 		("target,t", value<string>(&target_vertex), "Target vertex name")
+		("outdir,o", value<string>(&outdir), "Output directory name")
 	;
 	positional_options_description p;
 	p.add("file", -1);
@@ -30,7 +33,7 @@ int main(int argc, const char* argv[])
 	notify(vm);
 
 	if(vm.count("help") || !vm.count("file") ||
-		!vm.count("source") || !vm.count("target"))
+		!vm.count("source") || !vm.count("target") || !vm.count("outdir"))
 	{
 		cerr << desc << endl;
 		return EXIT_FAILURE;
@@ -39,6 +42,23 @@ int main(int argc, const char* argv[])
 	if(source_vertex == target_vertex)
 	{
 		cerr<<"Source vertex must be different from target vertex."<<endl;
+		return EXIT_FAILURE;
+	}
+	
+	//string output_directory = boost::filesystem::current_path().string() + "/" + outdir;
+	//boost::filesystem::path dir(output_directory);
+	boost::filesystem::path dir(outdir);
+	if(!boost::filesystem::exists(dir))
+	{
+		if(!boost::filesystem::create_directory(dir))
+		{
+			cerr<<"Cannot create directory \""+dir.string()+"\"."<<endl;
+			return EXIT_FAILURE;
+		}
+	}
+	else if (!boost::filesystem::is_directory(dir))
+	{
+		cerr<<"Cannot create directory \""+dir.string()+"\". File already exists."<<endl;
 		return EXIT_FAILURE;
 	}
 	
@@ -75,7 +95,7 @@ int main(int argc, const char* argv[])
 		cerr<<"There is no path between \""<<source_vertex<<"\" and \""<<target_vertex<<"\"."<<endl;
 		return EXIT_FAILURE;
 	}
-	system ("make clear"); // for windows probably it won't work
+	system("make clear"); // for windows probably it won't work
 	g.newReportFile(v_desc.first, v_desc.second);
 	try
 	{
@@ -123,12 +143,12 @@ int main(int argc, const char* argv[])
 		g.setEdgesColor(red_list, Graph::RED);
 		g.setEdgesColor(green_list, Graph::GREEN);
 		g.setEdgesURL(green_list, "path", 1);
-		g.generateHTML("index");
+		g.generateHTML(outdir + "/index");
 	}
 	catch(const string& err)
 	{
 		cerr<<err<<endl;
-		system ("make clear"); // for windows probably it won't work
+		std::system("make clear"); // for windows probably it won't work
 		return EXIT_FAILURE;
 	}
 	
