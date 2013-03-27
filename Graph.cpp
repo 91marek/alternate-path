@@ -69,17 +69,19 @@ void Graph::generateHTML(const string& base_name) throw(string)
 	out_html.close();
 }
 
-void Graph::newReportFile(const EdgeList& el)
+void Graph::newReportFile(Vertex v_source, Vertex v_target)
 {
 	report.open ("report.txt", fstream::out | fstream::trunc);
 	report << "Shortest path: ";
-	double cost = 0;
-	BOOST_FOREACH(Edge e, el)
+	double cost;
+	VertexList shortest;
+	tie(shortest, cost) =  readShortestVertexPath(v_source, v_target);
+	string path="";
+	BOOST_FOREACH(Vertex v, shortest)
 	{
-		report << getVertexName(source(e, graph)) << "--" << getVertexName(target(e, graph)) << "  ";
-		cost += getEdgeWeight(e);
+		path+=getVertexName(v) + "--";
 	}
-	report << " Cost: " << cost << endl;
+	report << path.substr(0, path.length()-2)<<" Cost: " << cost << endl;
 	return;
 }
 
@@ -88,16 +90,19 @@ void Graph::appendBridgeLine(Vertex v1, Vertex v2)
 	report << getVertexName(v1) << "--" << getVertexName(v2) << " | No emergency path" << endl;
 }
 
-void Graph::appendEmergencyLine(Vertex v1, Vertex v2, const EdgeList& el)
+void Graph::appendEmergencyLine(Vertex v1, Vertex v2, Vertex v_source, Vertex v_target)
 {
 	report << getVertexName(v1) << "--" << getVertexName(v2) << " | ";
-	double cost = 0;
-	BOOST_FOREACH(Edge e, el)
+	double cost;
+	VertexList shortest;
+	tie(shortest, cost) = readShortestVertexPath(v_source, v_target);
+	string path="";
+	BOOST_FOREACH(Vertex v, shortest)
 	{
-		report << getVertexName(source(e, graph)) << "--" << getVertexName(target(e, graph)) << "  ";
-		cost += getEdgeWeight(e);
+		path+=getVertexName(v) + "--";
 	}
-	report << " Cost: " << cost << endl;
+	report << path.substr(0, path.length()-2)<<" Cost: " << cost << endl;
+	return;
 }
 
 pair<Graph::Vertex, Graph::Vertex> Graph::getVerticesByName(const string& v1, const string& v2) const throw(string)
@@ -233,6 +238,21 @@ bool Graph::computeDistances(const Vertex v1, const Vertex v2)
 	
 	// graph does not contain vertex v2
 	return false;
+}
+pair<Graph::VertexList, double> Graph::readShortestVertexPath(const Vertex v1, const Vertex v2)
+{
+	double cost = 0;
+	VertexList result;
+	Vertex v = v2;
+	while(v!=v1)
+	{
+		Vertex new_v = get(vertex_predecessor, graph, v);
+		result.push_front(v);
+		cost += getEdgeWeight(edge(v, new_v, graph).first);
+		v = new_v;		
+	}
+	result.push_front(v1);
+	return make_pair(result, cost);
 }
 
 Graph::EdgeList Graph::readShortestPath(const Vertex v1, const Vertex v2)

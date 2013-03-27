@@ -34,6 +34,7 @@ public:
 	typedef graph_traits<GraphContainer>::edge_iterator EdgeIter;
 	typedef graph_traits<GraphContainer>::out_edge_iterator OutEdgeIter;
 	typedef list<Edge> EdgeList;
+	typedef list<Vertex> VertexList;
 	
 	/* constructors etc. */
 	Graph()
@@ -52,14 +53,14 @@ public:
 	void readGraph(istream& in);
 	void writeGraph(ostream& out);
 	void generateHTML(const string& base_name) throw(string);
-	void newReportFile(const EdgeList& el);
+	void newReportFile(Vertex v_source, Vertex v_target);
 	void appendBridgeLine(Vertex v1, Vertex v2);
-	void appendEmergencyLine(Vertex v1, Vertex v2, const EdgeList& el);
+	void appendEmergencyLine(Vertex v1, Vertex v2, Vertex v_source, Vertex v_target);
 	
 	/* getters */
 	pair<Vertex, Vertex> getVerticesByName(const string& v1, const string& v2) const throw(string);
 	
-	const string& getVertexName(const Vertex& v) const
+	const string& getVertexName(const Vertex v) const
 	{
 		return get(vertex_name, graph, v);
 	}
@@ -123,6 +124,7 @@ private:
 	
 	bool computeDistances(const Vertex v1, const Vertex v2);
 	EdgeList readShortestPath(const Vertex v1, const Vertex v2);
+	pair<VertexList, double> readShortestVertexPath(const Vertex v1, const Vertex v2);
 };
 
 class CompVertexDist {

@@ -76,7 +76,7 @@ int main(int argc, const char* argv[])
 		return EXIT_FAILURE;
 	}
 	system ("make clear"); // for windows probably it won't work
-	g.newReportFile(shortest);
+	g.newReportFile(v_desc.first, v_desc.second);
 	try
 	{
 		unsigned i=0;
@@ -111,7 +111,7 @@ int main(int argc, const char* argv[])
 				g.setEdgeColor(restored, Graph::BLUE);	// blue broken edge
 				g.setEdgesColor(new_shortest, Graph::GREEN);	// green alternate path
 				g.generateHTML("path" + lexical_cast<string>(++i));	// i starts from 1
-				g.appendEmergencyLine(curr_edge_end1, curr_edge_end2, new_shortest);
+				g.appendEmergencyLine(curr_edge_end1, curr_edge_end2, v_desc.first, v_desc.second);
 				/* clean all up */
 				g.setEdgeURL(restored, "");
 				g.setEdgeColor(restored, Graph::BLACK);
