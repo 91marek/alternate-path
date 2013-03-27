@@ -15,6 +15,3 @@ $(EXECUTABLE): $(OBJECTS)
 
 clean:
 	rm *.o $(EXECUTABLE)
-
-clear:
-	rm *dot *.map *.gif *.html
