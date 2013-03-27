@@ -26,39 +26,43 @@ void Graph::writeGraph(ostream& out)
 	write_graphviz_dp(out, graph, dp);
 }
 
-void Graph::generateHTML(const string& base_name) throw(string)
+void Graph::generateHTML(const string& base_name, const string& outdir) throw(string)
 {
 	// write dot file
 	ofstream out_dot;
-	out_dot.open((base_name + ".dot").c_str());
+	string filename_dot = filePath(outdir, base_name) + ".dot";
+	out_dot.open(filename_dot.c_str());
 	if(!out_dot.is_open())
 	{
-		throw string("Unable to open file \"" + base_name + ".dot\".");
+		throw string("Unable to open file \"" + filename_dot + "\".");
 	}
 	writeGraph(out_dot);
 	out_dot.close();
 	
 	// generate map and gif file
-	string cmd("neato -Tcmapx -o" + base_name + ".map -Tgif -o" + base_name + ".gif " + base_name + ".dot");
+	string filename_map = filePath(outdir, base_name) + ".map";
+	string filename_gif = filePath(outdir, base_name) + ".gif";
+	string cmd("neato -Tcmapx -o" + filename_map + " -Tgif -o" + filename_gif + " " + filename_dot);
 	cout<<cmd<<endl;
 	system(cmd.c_str());
 	
 	// write html file
 	ofstream out_html;
-	out_html.open((base_name + ".html").c_str());
+	string filename_html = filePath(outdir, base_name) + ".html";
+	out_html.open(filename_html.c_str());
 	if(!out_html.is_open())
 	{
-		throw string("Unable to open file \"" + base_name + ".html\".");
+		throw string("Unable to open file \"" + filename_html + "\".");
 	}
 	out_html<<"<FONT COLOR=\"green\"><b>-- Shortest path &nbsp</FONT>"<<endl;
 	out_html<<"<FONT COLOR=\"red\">-- Critical edges (without emergency path) on shortest path &nbsp</FONT>"<<endl;
-	out_html<<"<FONT COLOR=\"blue\">-- Edge marked as broken</b></FONT>"<<endl;
+	out_html<<"<FONT COLOR=\"blue\">-- Edge marked as broken</b></FONT><br />"<<endl;
 	out_html<<"<IMG SRC=" + base_name + ".gif USEMAP=\"#G\" />"<<endl;
 	ifstream in_map;
-	in_map.open((base_name + ".map").c_str());
+	in_map.open(filename_map.c_str());
 	if(!in_map.is_open())
 	{
-		throw string("Unable to open file \"" + base_name + ".map\".");
+		throw string("Unable to open file \"" + filename_map + "\".");
 	}
 	istreambuf_iterator<char> src(in_map.rdbuf());
 	istreambuf_iterator<char> end;
@@ -69,9 +73,9 @@ void Graph::generateHTML(const string& base_name) throw(string)
 	out_html.close();
 }
 
-void Graph::newReportFile(Vertex v_source, Vertex v_target)
+void Graph::newReportFile(const string& outdir, Vertex v_source, Vertex v_target)
 {
-	report.open ("report.txt", fstream::out | fstream::trunc);
+	report.open(filePath(outdir, "report.txt").c_str(), fstream::out | fstream::trunc);
 	report << "Shortest path: ";
 	double cost;
 	VertexList shortest;

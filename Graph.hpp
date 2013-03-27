@@ -52,8 +52,8 @@ public:
 	/* read & write */
 	void readGraph(istream& in);
 	void writeGraph(ostream& out);
-	void generateHTML(const string& base_name) throw(string);
-	void newReportFile(Vertex v_source, Vertex v_target);
+	void generateHTML(const string& base_name, const string& outdir) throw(string);
+	void newReportFile(const string& outdir, Vertex v_source, Vertex v_target);
 	void appendBridgeLine(Vertex v1, Vertex v2);
 	void appendEmergencyLine(Vertex v1, Vertex v2, Vertex v_source, Vertex v_target);
 	
@@ -125,6 +125,11 @@ private:
 	bool computeDistances(const Vertex v1, const Vertex v2);
 	EdgeList readShortestPath(const Vertex v1, const Vertex v2);
 	pair<VertexList, double> readShortestVertexPath(const Vertex v1, const Vertex v2);
+	
+	string filePath(const string& dirname, const string& filename)
+	{
+		return dirname + "/" + filename;
+	}
 };
 
 class CompVertexDist {

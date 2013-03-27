@@ -61,6 +61,7 @@ int main(int argc, const char* argv[])
 		cerr<<"Cannot create directory \""+dir.string()+"\". File already exists."<<endl;
 		return EXIT_FAILURE;
 	}
+	outdir = dir.string();
 	
 	//reading
 	Graph g;
@@ -95,8 +96,7 @@ int main(int argc, const char* argv[])
 		cerr<<"There is no path between \""<<source_vertex<<"\" and \""<<target_vertex<<"\"."<<endl;
 		return EXIT_FAILURE;
 	}
-	system("make clear"); // for windows probably it won't work
-	g.newReportFile(v_desc.first, v_desc.second);
+	g.newReportFile(outdir, v_desc.first, v_desc.second);
 	try
 	{
 		unsigned i=0;
@@ -130,7 +130,7 @@ int main(int argc, const char* argv[])
 				g.setEdgeURL(restored, "index.html");
 				g.setEdgeColor(restored, Graph::BLUE);	// blue broken edge
 				g.setEdgesColor(new_shortest, Graph::GREEN);	// green alternate path
-				g.generateHTML("path" + lexical_cast<string>(++i));	// i starts from 1
+				g.generateHTML("path" + lexical_cast<string>(++i), outdir);	// i starts from 1
 				g.appendEmergencyLine(curr_edge_end1, curr_edge_end2, v_desc.first, v_desc.second);
 				/* clean all up */
 				g.setEdgeURL(restored, "");
@@ -143,12 +143,11 @@ int main(int argc, const char* argv[])
 		g.setEdgesColor(red_list, Graph::RED);
 		g.setEdgesColor(green_list, Graph::GREEN);
 		g.setEdgesURL(green_list, "path", 1);
-		g.generateHTML(outdir + "/index");
+		g.generateHTML("index", outdir);
 	}
 	catch(const string& err)
 	{
 		cerr<<err<<endl;
-		std::system("make clear"); // for windows probably it won't work
 		return EXIT_FAILURE;
 	}
 	
