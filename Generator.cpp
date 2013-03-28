@@ -14,12 +14,10 @@ using namespace std;
 using namespace boost;
 using namespace boost::program_options;
 
-
-
 // Vertex properties
-typedef property < vertex_name_t, int> VertexProperty;
+typedef property <vertex_name_t, int> VertexProperty;
 // Edge properties
-typedef property < edge_weight_t, double > EdgeProperty;
+typedef property <edge_weight_t, double> EdgeProperty;
 // adjacency_list-based graph type
 typedef adjacency_list<setS, vecS, undirectedS, VertexProperty, EdgeProperty> GraphContainer;
 
@@ -78,7 +76,6 @@ int main(int argc, const char* argv[])
 		{
 			Edge new_e = add_edge(vertexes[i], vertexes[j%n], graph).first;
 			put(edge_weight, graph, new_e, 1);
-			
 		}
 	}
 	EdgeIter ei, ei_end;
@@ -95,7 +92,7 @@ int main(int argc, const char* argv[])
 			Vertex v_sour = source(e, graph);
 			Vertex v_targ = target(e, graph);
 			Vertex new_targ = vertexes[rand()%n];
-			while( new_targ == v_sour)
+			while(new_targ == v_sour)
 				new_targ = vertexes[rand()%n];
 			remove_edge(e, graph);
 			Edge new_e = add_edge(v_sour, new_targ, graph).first;
@@ -107,5 +104,6 @@ int main(int argc, const char* argv[])
 	dp.property("node_id", get(vertex_name, graph));
 	dp.property("weight", get(edge_weight, graph));
 	write_graphviz_dp(result, graph, dp);
+	result.close();
 	return EXIT_SUCCESS;
 }
