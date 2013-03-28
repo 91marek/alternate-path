@@ -41,10 +41,10 @@ int main(int argc, const char* argv[])
 	options_description desc("Usage: " + string(argv[0]) + " [options]\nOptions:");
 	desc.add_options()
 		("help,h", "Produce help message")
-		("output,o", value<string>(&filename), "Result graph filename")
-		("num,n", value<int>(&n), "Number of vertexes")
-		("edges,e", value<int>(&e), "Number of edges")
-		("prob,p", value<double>(&prob), "Probability, that edge will be moved")
+		("output,o", value<string>(&filename), "Result graph filename (obligatory)")
+		("num,n", value<int>(&n), "Number of vertexes (obligatory)")
+		("edges,e", value<int>(&e), "Number of edges (obligatory)")
+		("prob,p", value<double>(&prob), "Probability, that edge will be moved (obligatory)")
 	;
 	positional_options_description p;
 	p.add("output", -1);
