@@ -21,6 +21,7 @@ void Graph::writeGraph(ostream& out)
 	dynamic_properties dp;
 	dp.property("node_id", get(vertex_name, graph));
 	dp.property("label", get(edge_weight, graph));
+	dp.property("len", get(edge_weight, graph));
 	dp.property("color", get(edge_color, graph));
 	dp.property("URL", get(edge_name, graph));
 	write_graphviz_dp(out, graph, dp);
