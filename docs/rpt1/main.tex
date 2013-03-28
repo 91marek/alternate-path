@@ -23,13 +23,21 @@ Muszą być spełnione następujące warunki: a)pierwsza wygenerowana ścieżka:
 \section{Propozycja rozwiązania}
 
 \paragraph{Wejście programu}
-Program będzie przyjmował na wejściu graf oraz dwa wierzchołki: źródłowy i~docelowy. Graf będzie grafem nieskierowanym z~ważonymi krawędziami (nieujemnymi). Zadany będzie w~pliku tekstowym. Format tego pliku będzie zgodny z~formatem DOT \cite{dot}. Przykładowe wywołanie programu może wyglądać w~ten sposób:
+Program będzie przyjmował na wejściu graf oraz dwa wierzchołki: źródłowy i~docelowy. Graf będzie grafem nieskierowanym z~ważonymi krawędziami (wagi nieujemne) bez krawędzi równoległych. Graf będzie zadany w~pliku tekstowym. Format tego pliku będzie zgodny z~formatem DOT \cite{dot}. Parametrami programu będą:
+
+\begin{itemize}
+\item nazwa pliku tekstowego zawierającego opis grafu w~formacie DOT,
+\item nazwa wierzchołka źródłowego (ang. {\it source}) i~nazwa wierzchołka docelowego (ang. {\it target}).
+\end{itemize}
+
+Przykładowe wywołanie programu może wyglądać w~ten sposób:
 
 \begin{verbatim}
-$ ./ap graph.dot -s w1 -t w2
+$ ./ap graph.dot -s w1 -t w5
 \end{verbatim}
 
-Przykładowy plik z~zadanym grafem wejściowym może wyglądać~w ten sposób:
+{\it ap} jest skrótem od {\it Alternate Path} - tak będzie nazywał się nasz program. Przykładowy plik z~zadanym grafem wejściowym może wyglądać~w ten sposób:
+
 \begin{verbatim}
 /* graph.dot */
 graph G {
@@ -42,11 +50,45 @@ graph G {
 }
 \end{verbatim}
 
+Plik opisujący graf może być przygotowany ręcznie, zostać pobrany z~Internetu, a~także będzie mógł być wygenerowany przy pomocy naszego drugiego programu, tj. generatora grafów. Opis działania generatora grafów można znaleźć w~paragrafie \ref{generator}.
+
 \paragraph{Przetwarzanie}
-Graf będzie wewnętrznie reprezentowany w~postaci listy sąsiedztwa, której implementację dostarcza biblioteka Boost Graph \cite{bgl}. Pomimo, że biblioteka dostarcza implementację algorytmu znajdującego najkrótszą ścieżkę pomiędzy dwoma wierzchołkami, zaimplementujemy własny algorytm oparty na algorytmie Dijkstry. Ogólny algorytm będzie polegał na znalezieniu najkrótszej ścieżki pomiędzy wierzchołkami źródłowym i~docelowym oraz wykorzystaniu jej do dalszego przetwarzania. Kolejne krawędzie z~tej ścieżki będą tymczasowo usuwane, aby uruchamiać algorytm znajdywania najkrótszej ścieżki, który dostarczy alternatywną ścieżkę dla awaryjnej krawędzi. Warto zwrócić uwagę na to, że mogą istnieć krawędzie, których usunięcie spowoduje, że graf przestanie być spójny. Takie krawędzie zostaną oznaczone specjalnym kolorem, jako krytyczne. Nie ma alternatywnych ścieżek w~grafie dla krawędzi krytycznych.
+Graf będzie wewnętrznie reprezentowany w~postaci listy sąsiedztwa, której implementację dostarcza biblioteka Boost Graph \cite{bgl}. Pomimo, że biblioteka dostarcza implementację algorytmu znajdującego najkrótszą ścieżkę pomiędzy dwoma wierzchołkami, zaimplementujemy własny algorytm oparty na algorytmie Dijkstry. Ogólny algorytm będzie polegał na znalezieniu najkrótszej ścieżki pomiędzy wierzchołkami źródłowym i~docelowym oraz wykorzystaniu jej do dalszego przetwarzania. Kolejne krawędzie z~tej ścieżki będą tymczasowo usuwane, aby uruchamiać algorytm znajdywania najkrótszej ścieżki, który dostarczy alternatywną ścieżkę dla awaryjnej krawędzi. Warto zwrócić uwagę na to, że mogą istnieć krawędzie, których usunięcie spowoduje, że graf przestanie być spójny. Takie krawędzie zostaną oznaczone kolorem czerwonym, jako krytyczne. Nie ma alternatywnych ścieżek w~grafie dla krawędzi krytycznych.
 
 \paragraph{Wyjście programu}
-Wizualizację rezultatu działania programu zapewni program NEATO z~pakietu Graphviz \cite{gv}. Służy on do rysowania grafów nieskierowanych. Za pomocą programu NEATO zostaną wygenerowane pliki, na podstawie których zostaną wygenerowane strony HTML. Na stronach będzie można zobaczyć jak wyglądają najkrótsza ścieżka pomiędzy wierzchołkami źródłowym i~docelowym oraz najkrótsze ścieżki alternatywne (po kliknięciu na krawędź, którą uznaje się za awaryjną).
+Wizualizację rezultatu działania programu zapewni program NEATO z~pakietu Graphviz \cite{gv}. Służy on do rysowania grafów nieskierowanych. Za pomocą programu NEATO zostaną wygenerowane pliki, na podstawie których zostaną wygenerowane strony HTML. Na stronach będzie można zobaczyć jak wyglądają najkrótsza ścieżka pomiędzy wierzchołkami źródłowym i~docelowym oraz najkrótsze ścieżki alternatywne (po kliknięciu na krawędź, którą uznaje się za awaryjną). Przykładowa zawartość stron może wyglądać w~ten sposób:
+
+\begin{figure}[ht]
+\begin{minipage}[b]{0.45\linewidth}
+\centering
+\includegraphics[width=\textwidth]{picture1.png}
+\caption{\em Główny obrazek (na stronie index.html)}
+\label{fig:picture1}
+\end{minipage}
+\hspace{0.5cm}
+\begin{minipage}[b]{0.45\linewidth}
+\centering
+\includegraphics[width=\textwidth]{picture2.png}
+\caption{\em Po kliknięciu na zieloną krawędź na głównym obrazku}
+\label{fig:picture2}
+\end{minipage}
+\end{figure}
+
+Na rysunku po lewo widzimy najkrótszą ścieżkę pomiędzy wierzchołkami \texttt{mar} a \texttt{bar}. Została ona oznaczona na kolorowo. Składa się z~dwóch krawędzi. Na wypadek awarii krawędzi zielonej istnieje ścieżka alternatywna, która jest przedstawiona na rysunku po prawo. Czerwona krawędź jest krytyczna - nie ma dla niej alternatywnych ścieżek.
+
+Drugim rezultatem działania programu będzie plik \texttt{report.txt} zawierający informacje o~najkrótszej ścieżce oraz ścieżkach alternatywnych. Przy każdej ze ścieżek będzie informacja o~koszcie (sumie wag). Przykładowa zawartość pliku raportu może wyglądać w~ten sposób:
+
+\begin{verbatim}
+Shortest path: mar--prz--bar Cost: 13.1416
+mar--prz | No emergency path
+prz--bar | mar--prz--foo--bar Cost: 15.8599
+\end{verbatim}
+
+\paragraph{Generator grafów}\label{generator}
+\dots
+
+\paragraph{Testy i~eksperymenty}
+\dots
 
 \begin{thebibliography}{}
 \bibitem{dot} "The DOT Language" \\ \url{http://www.graphviz.org/doc/info/lang.html}
