@@ -1,17 +1,22 @@
-CC=g++
-CFLAGS=-c -Wall
-LDFLAGS=-lboost_graph -lboost_program_options -lboost_filesystem -lboost_system
-SOURCES=Main.cpp Graph.cpp
-OBJECTS=$(SOURCES:.cpp=.o)
-EXECUTABLE=ap
+CC = g++
+CCFLAGS = -Wall
 
-all: $(SOURCES) $(EXECUTABLE)
+all: ap gg
 	
-$(EXECUTABLE): $(OBJECTS) 
-	$(CC) $(OBJECTS) $(LDFLAGS) -o $@
+ap: Main.o Graph.o
+	$(CC) Main.o Graph.o -lboost_graph -lboost_program_options -lboost_filesystem -lboost_system -o $@
 
-.cpp.o:
-	$(CC) $(CFLAGS) $< -o $@
+Main.o: Main.cpp Graph.hpp
+	$(CC) -c $(CCFLAGS) Main.cpp -o $@
+
+Graph.o: Graph.cpp Graph.hpp
+	$(CC) -c $(CCFLAGS) Graph.cpp -o $@
+
+gg: Generator.o
+	$(CC) Generator.cpp -lboost_graph -lboost_program_options -o $@
+
+Generator.o: Generator.cpp
+	$(CC) -c $(CCFLAGS) Generator.cpp -o $@
 
 clean:
-	rm *.o $(EXECUTABLE)
+	rm -f *.o ap gg

@@ -90,7 +90,6 @@ int main(int argc, const char* argv[])
 		if(rand() % 100 < prob)
 		{	
 			Vertex v_sour = source(e, graph);
-			Vertex v_targ = target(e, graph);
 			Vertex new_targ = vertexes[rand()%n];
 			while(new_targ == v_sour)
 				new_targ = vertexes[rand()%n];
