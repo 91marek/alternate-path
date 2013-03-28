@@ -16,15 +16,19 @@ int main(int argc, const char* argv[])
 	string source_vertex;
 	string target_vertex;
 	string outdir;
+	bool no_report = false;
+	bool no_html = false;
 
 	// Declare the supported options.
 	options_description desc("Usage: " + string(argv[0]) + " [options]\nOptions:");
 	desc.add_options()
 		("help,h", "Produce help message")
-		("file,f", value<string>(&filename), "Input graph filename")
-		("source,s", value<string>(&source_vertex), "Source vertex name")
-		("target,t", value<string>(&target_vertex), "Target vertex name")
-		("outdir,o", value<string>(&outdir), "Output directory name")
+		("file,f", value<string>(&filename), "Input graph filename (obligatory)")
+		("source,s", value<string>(&source_vertex), "Source vertex name (obligatory)")
+		("target,t", value<string>(&target_vertex), "Target vertex name (obligatory)")
+		("outdir,o", value<string>(&outdir), "Output directory name (obligatory)")
+		("no-report", value<bool>(&no_report)->zero_tokens(), "If specified, report won't be generated")
+		("no-html", value<bool>(&no_html)->zero_tokens(), "If specified, HTML won't be generated")
 	;
 	positional_options_description p;
 	p.add("file", -1);
@@ -38,6 +42,12 @@ int main(int argc, const char* argv[])
 		cerr << desc << endl;
 		return EXIT_FAILURE;
 	}
+	
+	if(no_report)
+		cout << "[INFO] Report won't be generated." << endl;
+	
+	if(no_html)
+		cout << "[INFO] HTML won't be generated." << endl;
 	
 	if(source_vertex == target_vertex)
 	{
@@ -96,16 +106,16 @@ int main(int argc, const char* argv[])
 	
 	/* find reference path */
 	Graph::EdgeList shortest = g.findShortestPath(v_desc.first, v_desc.second);
-	Graph::EdgeList red_list = Graph::EdgeList();
-	Graph::EdgeList green_list = Graph::EdgeList();
-	
-	/* there is no path between given vertices */
-	if ( shortest.empty() )
+	if (shortest.empty())	// there is no path between given vertices
 	{
 		cerr<<"There is no path between \""<<source_vertex<<"\" and \""<<target_vertex<<"\"."<<endl;
 		return EXIT_FAILURE;
 	}
-	g.newReportFile(outdir, v_desc.first, v_desc.second);
+	
+	Graph::EdgeList red_list = Graph::EdgeList();
+	Graph::EdgeList green_list = Graph::EdgeList();
+	if(!no_report)
+		g.newReportFile(outdir, v_desc.first, v_desc.second);
 	try
 	{
 		unsigned i=0;
@@ -131,7 +141,8 @@ int main(int argc, const char* argv[])
 				red_list.push_back(restored);
 				g.setEdgeURL(restored, "");
 				g.setEdgeColor(restored, Graph::BLACK);
-				g.appendBridgeLine(curr_edge_end1, curr_edge_end2);
+				if(!no_report)
+					g.appendBridgeLine(curr_edge_end2, curr_edge_end1);
 			}
 			else // current edge has alternatives
 			{
@@ -139,8 +150,10 @@ int main(int argc, const char* argv[])
 				g.setEdgeURL(restored, "index.html");
 				g.setEdgeColor(restored, Graph::BLUE);	// blue broken edge
 				g.setEdgesColor(new_shortest, Graph::GREEN);	// green alternate path
-				g.generateHTML("path" + lexical_cast<string>(++i), outdir);	// i starts from 1
-				g.appendEmergencyLine(curr_edge_end1, curr_edge_end2, v_desc.first, v_desc.second);
+				if(!no_html)
+					g.generateHTML("path" + lexical_cast<string>(++i), outdir);	// i starts from 1
+				if(!no_report)
+					g.appendEmergencyLine(curr_edge_end2, curr_edge_end1, v_desc.first, v_desc.second);
 				/* clean all up */
 				g.setEdgeURL(restored, "");
 				g.setEdgeColor(restored, Graph::BLACK);
@@ -152,7 +165,8 @@ int main(int argc, const char* argv[])
 		g.setEdgesColor(red_list, Graph::RED);
 		g.setEdgesColor(green_list, Graph::GREEN);
 		g.setEdgesURL(green_list, "path", 1);
-		g.generateHTML("index", outdir);
+		if(!no_html)
+			g.generateHTML("index", outdir);
 	}
 	catch(const string& err)
 	{

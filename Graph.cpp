@@ -238,6 +238,7 @@ bool Graph::computeDistances(const Vertex v1, const Vertex v2)
 	// graph does not contain vertex v2
 	return false;
 }
+
 pair<Graph::VertexList, double> Graph::readShortestVertexPath(const Vertex v1, const Vertex v2)
 {
 	double cost = 0;
