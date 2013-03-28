@@ -84,16 +84,59 @@ mar--prz | No emergency path
 prz--bar | mar--prz--foo--bar Cost: 15.8599
 \end{verbatim}
 
-\paragraph{Generator grafów}\label{generator}
-\dots
+\paragraph{Generator grafów}
+\label{generator}
+Złożoność obliczeniowa programu badana będzie na wygenerowanych grafach pochodzących z generatora grafów. Danymi wyjściowymi będzie graf zapisany w formacie DOT. Grafy te będą odwzorowywać sieci małego świata\cite{amaral2000classes}. Oznacza to, że większość wierzchołków nie sąsiaduje ze sobą, ale pomiędzy większością par wierzchołków można znaleźć ścieżkę składającą się z małej liczby krawędzi. Sieci takie często obserwowane są np. w sieciach społecznościowych. Krawędź oznacza wtedy, że dwie osoby się znają.
+
+Tworzenie przykładowego grafu małego świata składa się z dwóch kroków. Pierwszym z nich jest stworzenie grafu o regularnej strukturze. Przykład zaprezentowany jest na Rys. \ref{fig:regul}. Następnie należy dla każdej z krawędzi wylosować, czy powinna ona zostać przepięta, czy też nienaruszona. W efekcie powstaje graf jak na Rys. \ref{fig:pomiesz}. Dla większej liczby wierzchołków graf widocznie nabiera cech ,,małego świata''.
+
+
+\begin{figure}[ht]
+\begin{minipage}[b]{0.45\linewidth}
+\centering
+\includegraphics[width=\textwidth]{regularny.png}
+\caption{\em Graf o regularnej strukturze}
+\label{fig:regul}
+\end{minipage}
+\hspace{0.5cm}
+\begin{minipage}[b]{0.45\linewidth}
+\centering
+\includegraphics[width=\textwidth]{pomieszany.png}
+\caption{\em Graf po przemieszaniu krawędzi}
+\label{fig:pomiesz}
+\end{minipage}
+\end{figure}
+
+
+Parametrami generatora są:
+\begin{itemize}
+\item plik wyjściowy
+\item liczba wierzchołków
+\item liczba krawędzi wychodzących z każdego z wierzchołków 
+\item prawdopodobieństwo przepięcia krawędzi
+\end{itemize}
+
+Przykładowe wołanie:
+\begin{verbatim}
+$ ./gg graph.dot -n 30 -e 2 -p 0.20
+\end{verbatim}
 
 \paragraph{Testy i~eksperymenty}
-\dots
+W celu zbadania złożoności algorytmu stworzony został skrypt zapisujący czas działania programu wraz  z długością najkrótszej ścieżki pomiędzy wylosowanymi wierzchołkami. Przykładowy wynik działania prezentuje Rys. \ref{fig:tabela}.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[scale=0.7]{tabela.png}
+\caption{\em Zestawienie wynikow}
+\label{fig:tabela}
+\end{figure}
+Dzięki takiemu zestawieniu będzie można sprawdzić, czy złożoność teoretyczna algorytmu została wyznaczona poprawnie.
 
 \begin{thebibliography}{}
-\bibitem{dot} "The DOT Language" \\ \url{http://www.graphviz.org/doc/info/lang.html}
-\bibitem{bgl} "The Boost Graph Library" \\ \url{http://www.boost.org/doc/libs/1_53_0/libs/graph/doc/index.html}
-\bibitem{gv} "Graphviz - Graph Visualization Software" \\ \url{http://www.graphviz.org/}
+\bibitem{dot} ,,The DOT Language'' \\ \url{http://www.graphviz.org/doc/info/lang.html}
+\bibitem{bgl} ,,The Boost Graph Library'' \\ \url{http://www.boost.org/doc/libs/1_53_0/libs/graph/doc/index.html}
+\bibitem{gv} ,,Graphviz - Graph Visualization Software'' \\ \url{http://www.graphviz.org/}
+\bibitem{amaral2000classes} ,,Classes of small-world networks'', Amaral, Lu{\i}s A Nunes and Scala, Antonio and Barth{\'e}l{\'e}my, Marc and Stanley, H Eugene
 \end{thebibliography}
 
 \end{document}
