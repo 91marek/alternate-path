@@ -20,6 +20,7 @@ void Graph::writeGraph(ostream& out)
 {
 	dynamic_properties dp;
 	dp.property("node_id", get(vertex_name, graph));
+	dp.property("color", get(vertex_color, graph));
 	dp.property("label", get(edge_weight, graph));
 	dp.property("len", get(edge_weight, graph));
 	dp.property("color", get(edge_color, graph));
@@ -146,7 +147,17 @@ pair<Graph::Vertex, Graph::Vertex> Graph::getVerticesByName(const string& v1, co
 	throw string("Vertices \"" + v1 + "\" and \"" + v2 + "\" not found.");
 }
 
+void Graph::setVertexColor(const Vertex v, Color c)
+{
+	put(vertex_color, graph, v, color(c));
+}
+
 void Graph::setEdgeColor(const Edge& e, Color c)
+{
+	put(edge_color, graph, e, color(c));
+}
+
+string Graph::color(Color c)
 {
 	string color;
 	switch(c)
@@ -156,7 +167,7 @@ void Graph::setEdgeColor(const Edge& e, Color c)
 		case BLUE: color = "blue"; break;
 		default : color = "black";
 	}
-	put(edge_color, graph, e, color);
+	return color;
 }
 
 void Graph::setEdgesColor(const EdgeList& el, Color c)

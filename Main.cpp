@@ -97,6 +97,8 @@ int main(int argc, const char* argv[])
 		/* find source and target on graph */
 		pair<Graph::Vertex, Graph::Vertex> v_desc;
 		v_desc = g.getVerticesByName(source_vertex, target_vertex);
+		g.setVertexColor(v_desc.first, Graph::RED);
+		g.setVertexColor(v_desc.second, Graph::RED);
 		
 		/* find reference path */
 		Graph::EdgeList shortest = g.findShortestPath(v_desc.first, v_desc.second);

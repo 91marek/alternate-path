@@ -15,8 +15,9 @@ public:
 	
 	// Vertex properties
 	typedef property < vertex_name_t, string,
+			property < vertex_color_t, string,
 			property < vertex_distance_t, double,
-			property < vertex_predecessor_t, vertex_descriptor_tmp > > > VertexProperty;
+			property < vertex_predecessor_t, vertex_descriptor_tmp > > > > VertexProperty;
 	// Edge properties
 	typedef property < edge_weight_t, double,
 			property < edge_color_t, string,
@@ -87,6 +88,7 @@ public:
 	
 	/* setters */
 	enum Color{RED, GREEN, BLUE, BLACK};
+	void setVertexColor(const Vertex v, Color c);
 	void setEdgeColor(const Edge& e, Color c);
 	void setEdgesColor(const EdgeList& el, Color c);
 	
@@ -126,6 +128,7 @@ private:
 	EdgeList readShortestPath(const Vertex v1, const Vertex v2);
 	pair<VertexList, double> readShortestVertexPath(const Vertex v1, const Vertex v2);
 	void appendLine(Vertex v_source, Vertex v_target);
+	string color(Color c);
 	
 	string filePath(const string& dirname, const string& filename)
 	{
