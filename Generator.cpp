@@ -64,6 +64,11 @@ int main(int argc, const char* argv[])
 		cerr<<"Unable to open file \""<<filename<<"\"."<<endl;
 		return EXIT_FAILURE;
 	}
+	if(n<3)
+	{
+		cerr<<"num is to small to generate sth interesting"<<endl;
+		return EXIT_FAILURE;		
+	}
 	GraphContainer graph;
 	for(int i = 0; i<n; ++i) //For num of vertexes
 	{

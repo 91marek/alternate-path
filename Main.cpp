@@ -106,6 +106,9 @@ int main(int argc, const char* argv[])
 	
 	/* find reference path */
 	Graph::EdgeList shortest = g.findShortestPath(v_desc.first, v_desc.second);
+	ofstream path_len("path_len.out");
+	path_len<<shortest.size()<<endl;
+	path_len.close();
 	if (shortest.empty())	// there is no path between given vertices
 	{
 		cerr<<"There is no path between \""<<source_vertex<<"\" and \""<<target_vertex<<"\"."<<endl;
