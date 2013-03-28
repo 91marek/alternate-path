@@ -55,8 +55,7 @@ int main(int argc, const char* argv[])
 		return EXIT_FAILURE;
 	}
 	
-	//string output_directory = boost::filesystem::current_path().string() + "/" + outdir;
-	//boost::filesystem::path dir(output_directory);
+	/* creating output directory */
 	boost::filesystem::path dir(outdir);
 	if(!boost::filesystem::exists(dir))
 	{
@@ -73,7 +72,7 @@ int main(int argc, const char* argv[])
 	}
 	outdir = dir.string();
 	
-	//reading
+	/* reading input file */
 	Graph g;
 	ifstream in(filename.c_str());
 	if(!in.is_open())
@@ -93,34 +92,36 @@ int main(int argc, const char* argv[])
 	}
 	in.close();
 	
-	pair<Graph::Vertex, Graph::Vertex> v_desc;
 	try
 	{
+		/* find source and target on graph */
+		pair<Graph::Vertex, Graph::Vertex> v_desc;
 		v_desc = g.getVerticesByName(source_vertex, target_vertex);
-	}
-	catch(const string& err)
-	{
-		cerr<<err<<endl;
-		return EXIT_FAILURE;
-	}
+		
+		/* find reference path */
+		Graph::EdgeList shortest = g.findShortestPath(v_desc.first, v_desc.second);
+		
+		/* save length of shortest path */
+		const string path_len_filename = "path_len.out";
+		ofstream path_len(path_len_filename.c_str());
+		if(!path_len.is_open())
+		{
+			cerr<<"Unable to open file \""<<path_len_filename<<"\"."<<endl;
+			return EXIT_FAILURE;
+		}
+		path_len<<shortest.size()<<endl;
+		path_len.close();
 	
-	/* find reference path */
-	Graph::EdgeList shortest = g.findShortestPath(v_desc.first, v_desc.second);
-	ofstream path_len("path_len.out");
-	path_len<<shortest.size()<<endl;
-	path_len.close();
-	if (shortest.empty())	// there is no path between given vertices
-	{
-		cerr<<"There is no path between \""<<source_vertex<<"\" and \""<<target_vertex<<"\"."<<endl;
-		return EXIT_FAILURE;
-	}
-	
-	Graph::EdgeList red_list = Graph::EdgeList();
-	Graph::EdgeList green_list = Graph::EdgeList();
-	if(!no_report)
-		g.newReportFile(outdir, v_desc.first, v_desc.second);
-	try
-	{
+		if (shortest.empty())	// there is no path between given vertices
+		{
+			cerr<<"There is no path between \""<<source_vertex<<"\" and \""<<target_vertex<<"\"."<<endl;
+			return EXIT_FAILURE;
+		}
+		
+		Graph::EdgeList red_list = Graph::EdgeList();
+		Graph::EdgeList green_list = Graph::EdgeList();
+		if(!no_report)
+			g.newReportFile(outdir, v_desc.first, v_desc.second);
 		unsigned i=0;
 		BOOST_FOREACH(Graph::Edge e, shortest)
 		{

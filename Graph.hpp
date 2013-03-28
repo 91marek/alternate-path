@@ -113,7 +113,7 @@ public:
 	}
 	
 	/* Dijkstra-based algorithm */
-	EdgeList findShortestPath(const Vertex v1, const Vertex v2);
+	EdgeList findShortestPath(const Vertex v1, const Vertex v2) throw(string);
 	
 	/* DEBUG */
 	void DEBUGprint(EdgeList& e);
@@ -122,7 +122,7 @@ private:
 	GraphContainer graph;
 	fstream report;
 	
-	bool computeDistances(const Vertex v1, const Vertex v2);
+	bool computeDistances(const Vertex v1, const Vertex v2) throw(string);
 	EdgeList readShortestPath(const Vertex v1, const Vertex v2);
 	pair<VertexList, double> readShortestVertexPath(const Vertex v1, const Vertex v2);
 	void appendLine(Vertex v_source, Vertex v_target);

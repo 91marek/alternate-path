@@ -34,3 +34,6 @@ path*.dot
 
 # report file
 report.txt
+
+# files from analisys
+*.csv

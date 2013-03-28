@@ -173,7 +173,7 @@ void Graph::setEdgesURL(const EdgeList& el, const string& base_name, unsigned st
 	}
 }
 
-Graph::EdgeList Graph::findShortestPath(const Vertex v1, const Vertex v2)
+Graph::EdgeList Graph::findShortestPath(const Vertex v1, const Vertex v2) throw(string)
 {
 	if(!computeDistances(v1, v2))
 		return EdgeList();	// return empty list when v2 is inaccessible from v1
@@ -181,7 +181,7 @@ Graph::EdgeList Graph::findShortestPath(const Vertex v1, const Vertex v2)
 		return readShortestPath(v1, v2);
 }
 
-bool Graph::computeDistances(const Vertex v1, const Vertex v2)
+bool Graph::computeDistances(const Vertex v1, const Vertex v2) throw(string)
 {
 	// priority queue
 	vector<Vertex> pq = vector<Vertex>(num_vertices(graph));
@@ -226,6 +226,8 @@ bool Graph::computeDistances(const Vertex v1, const Vertex v2)
 		for(; e!=e_end; ++e){
 			Vertex v_target = target(*e, graph);
 			double tmp_edge_weight = get(edge_weight, graph, *e);
+			if(tmp_edge_weight < 0.0)
+				throw string("Negative edge weight encountered.");
 			double target_distance = get(vertex_distance, graph, v_target);
 			if( target_distance > source_distance + tmp_edge_weight )
 			{
