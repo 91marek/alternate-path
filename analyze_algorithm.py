@@ -28,7 +28,7 @@ for i in xrange(30):
 file_name="times"
 with open(file_name+'.csv', 'wb') as f:	
 	writer = csv.writer(f, delimiter=';')
-	writer.writerow(["czas wykonania", "dlugosc sciezki"])
+	writer.writerow(["czas_wykonania", "dlugosc_sciezki"])
 	for exc_time, path_len in parms:
 		writer.writerow([str(exc_time), str(path_len)])
 subprocess.check_call(["rm", "graph.dot", "path_len.out"])

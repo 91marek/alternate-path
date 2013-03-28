@@ -42,7 +42,8 @@ void Graph::generateHTML(const string& base_name, const string& outdir) throw(st
 	// generate map and gif file
 	string filename_map = filePath(outdir, base_name) + ".map";
 	string filename_gif = filePath(outdir, base_name) + ".gif";
-	string cmd("neato -Tcmapx -o" + filename_map + " -Tgif -o" + filename_gif + " " + filename_dot);
+	string cmd("neato -Tcmapx -o" + filename_map + " -Tgif -o" + filename_gif + " "
+		+ filename_dot + " -Goverlap=false -Gsplines=true");
 	cout<<cmd<<endl;
 	system(cmd.c_str());
 	
