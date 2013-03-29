@@ -1,22 +1,25 @@
 CC = g++
 CCFLAGS = -Wall
 
-all: ap gg
+all: obj ap gg
+
+obj:
+	mkdir obj
 	
-ap: Main.o Graph.o
-	$(CC) Main.o Graph.o -lboost_graph -lboost_program_options -lboost_filesystem -lboost_system -o $@
+ap: obj/Main.o obj/Graph.o
+	$(CC) obj/Main.o obj/Graph.o -lboost_graph -lboost_program_options -lboost_filesystem -lboost_system -o $@
 
-Main.o: Main.cpp Graph.hpp
-	$(CC) -c $(CCFLAGS) Main.cpp -o $@
+obj/Main.o: src/Main.cpp src/Graph.hpp
+	$(CC) -c $(CCFLAGS) src/Main.cpp -o $@
 
-Graph.o: Graph.cpp Graph.hpp
-	$(CC) -c $(CCFLAGS) Graph.cpp -o $@
+obj/Graph.o: src/Graph.cpp src/Graph.hpp
+	$(CC) -c $(CCFLAGS) src/Graph.cpp -o $@
 
-gg: Generator.o
-	$(CC) Generator.cpp -lboost_graph -lboost_program_options -o $@
+gg: obj/Generator.o
+	$(CC) obj/Generator.o -lboost_graph -lboost_program_options -o $@
 
-Generator.o: Generator.cpp
-	$(CC) -c $(CCFLAGS) Generator.cpp -o $@
+obj/Generator.o: src/Generator.cpp
+	$(CC) -c $(CCFLAGS) src/Generator.cpp -o $@
 
 clean:
 	rm -f *.o ap gg
