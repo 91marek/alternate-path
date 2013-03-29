@@ -102,18 +102,6 @@ int main(int argc, const char* argv[])
 		
 		/* find reference path */
 		Graph::EdgeList shortest = g.findShortestPath(v_desc.first, v_desc.second);
-		
-		/* save length of shortest path */
-		const string path_len_filename = "path_len.out";
-		ofstream path_len(path_len_filename.c_str());
-		if(!path_len.is_open())
-		{
-			cerr<<"Unable to open file \""<<path_len_filename<<"\"."<<endl;
-			return EXIT_FAILURE;
-		}
-		path_len<<shortest.size()<<endl;
-		path_len.close();
-	
 		if (shortest.empty())	// there is no path between given vertices
 		{
 			cerr<<"There is no path between \""<<source_vertex<<"\" and \""<<target_vertex<<"\"."<<endl;

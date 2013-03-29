@@ -12,6 +12,9 @@
 *.la
 *.a
 
+# Compiled Python files
+*.pyc
+
 # Executable files
 ap
 gg
@@ -36,4 +39,10 @@ path*.dot
 report.txt
 
 # files from analisys
-*.csv
+times.csv
+avg_times.csv
+graph.dot
+graph.gif
+
+# configuration files
+config.py

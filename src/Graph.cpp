@@ -100,11 +100,13 @@ void Graph::appendLine(Vertex v_source, Vertex v_target)
 	VertexList shortest;
 	tie(shortest, cost) = readShortestVertexPath(v_source, v_target);
 	string path="";
+	unsigned i = 0;
 	BOOST_FOREACH(Vertex v, shortest)
 	{
 		path+=getVertexName(v) + "--";
+		++i;
 	}
-	report << path.substr(0, path.length()-2) << " Cost: " << cost << endl;
+	report << path.substr(0, path.length()-2) << " Cost: " << cost << " Hops: " << i-1 << endl;
 }
 
 pair<Graph::Vertex, Graph::Vertex> Graph::getVerticesByName(const string& v1, const string& v2) const throw(string)
