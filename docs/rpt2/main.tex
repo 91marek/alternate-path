@@ -20,7 +20,13 @@ Znajdowanie zbioru najkrótszych ścieżek pomiędzy parą wybranych lub wylosow
 \paragraph{Opis zadania}
 Muszą być spełnione następujące warunki: a)pierwsza wygenerowana ścieżka: najkrótsza ścieżka pomiędzy wybraną parą wierzchołków b)każda następna wygenerowana ścieżka posiada krawędź różną od co najmniej jednej krawędzi ścieżki z punktu a) i minimalną długość. Krok b) jest powtarzany kolejno aż do wyczerpania wszystkich krawędzi ścieżki z punktu a) Dane do projektu: G=(V,E) - graf o zadanej strukturze, wylosowana lub wybrana para wierzchołków. Zastosowanie: wyznaczanie ścieżek rezerwowych w sieci w sytuacji awarii pojedynczej krawędzi sieci. Literatura: N.Christofides, Graph Theory - an algorithmic approach, Academic Press 1975, str. 150- 157, 167-170. M.Sysło, N.Deo, J.Kowalik, Algorytmy optymalizacji dyskretnej, PWN 1995. N.Deo, Teoria grafów i jej zastosowania w technice i informatyce. PWN 1980.
 
-\section{Rozwiązanie zadania}
+\section{Algorytmy}
+
+Graf jest wewnętrznie reprezentowany w~postaci listy sąsiedztwa, której implementację dostarcza biblioteka Boost Graph \cite{bgl}. Pomimo, że biblioteka dostarcza implementację algorytmu znajdującego najkrótszą ścieżkę pomiędzy dwoma wierzchołkami, zaimplementowaliśmy własny algorytm oparty na algorytmie Dijkstry. Ogólny algorytm polega na znalezieniu najkrótszej ścieżki pomiędzy wierzchołkami źródłowym i~docelowym oraz wykorzystaniu jej do dalszego przetwarzania. Kolejne krawędzie z~tej ścieżki są tymczasowo usuwane, aby uruchamiać algorytm znajdywania najkrótszej ścieżki, który dostarcza alternatywną ścieżkę dla awaryjnej krawędzi. Warto zwrócić uwagę na to, że mogą istnieć krawędzie, których usunięcie spowoduje, że graf przestanie być spójny. Takie krawędzie oznaczane są kolorem czerwonym, jako krytyczne. Nie ma alternatywnych ścieżek w~grafie dla krawędzi krytycznych.
+
+\section{Programy}
+
+\paragraph{architektura}
 
 \paragraph{Wejście programu}
 Program przyjmuje na wejściu graf oraz dwa wierzchołki: źródłowy i~docelowy. Graf musi być grafem nieskierowanym z~ważonymi krawędziami (wagi nieujemne) bez krawędzi równoległych. Graf jest zadawany w~pliku tekstowym. Format tego pliku jest zgodny z~formatem DOT \cite{dot}. Parametrami programu są:
@@ -51,9 +57,6 @@ graph G {
 \end{verbatim}
 
 Plik opisujący graf może być przygotowany ręcznie, zostać pobrany z~Internetu, a~także może być wygenerowany przy pomocy naszego drugiego programu, tj. generatora grafów. Opis działania generatora grafów można znaleźć w~paragrafie \ref{generator}.
-
-\paragraph{Przetwarzanie}
-Graf jest wewnętrznie reprezentowany w~postaci listy sąsiedztwa, której implementację dostarcza biblioteka Boost Graph \cite{bgl}. Pomimo, że biblioteka dostarcza implementację algorytmu znajdującego najkrótszą ścieżkę pomiędzy dwoma wierzchołkami, zaimplementowaliśmy własny algorytm oparty na algorytmie Dijkstry. Ogólny algorytm polega na znalezieniu najkrótszej ścieżki pomiędzy wierzchołkami źródłowym i~docelowym oraz wykorzystaniu jej do dalszego przetwarzania. Kolejne krawędzie z~tej ścieżki są tymczasowo usuwane, aby uruchamiać algorytm znajdywania najkrótszej ścieżki, który dostarcza alternatywną ścieżkę dla awaryjnej krawędzi. Warto zwrócić uwagę na to, że mogą istnieć krawędzie, których usunięcie spowoduje, że graf przestanie być spójny. Takie krawędzie oznaczane są kolorem czerwonym, jako krytyczne. Nie ma alternatywnych ścieżek w~grafie dla krawędzi krytycznych.
 
 \paragraph{Wyjście programu}
 Wizualizację rezultatu działania programu zapewnia program NEATO z~pakietu Graphviz \cite{gv}. Służy on do rysowania grafów nieskierowanych. Za pomocą programu NEATO generowane są pliki, na podstawie których generowane są strony HTML. Na stronach można zobaczyć jak wyglądają najkrótsza ścieżka pomiędzy wierzchołkami źródłowym i~docelowym oraz najkrótsze ścieżki alternatywne (po kliknięciu na krawędź, którą uznaje się za awaryjną). Przykładowa zawartość stron może wyglądać w~ten sposób:
@@ -121,7 +124,8 @@ $ ./gg graph.dot -n 30 -e 2 -p 0.20
 
 {\it gg} jest skrótem od {\it Graph Generator}, czyli generator grafów.
 
-\paragraph{Testy i~eksperymenty}
+\section{Testy i~eksperymenty}
+
 W celu zbadania złożoności algorytmu stworzony został skrypt zapisujący czas działania programu wraz z długością najkrótszej ścieżki pomiędzy wylosowanymi wierzchołkami. Przykładowy wynik działania prezentuje Rys. \ref{fig:tabela}.
 
 \begin{figure}[ht]
