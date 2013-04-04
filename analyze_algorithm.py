@@ -33,13 +33,13 @@ for i in xrange(num_of_paths):
 		map[path_len] = [duration]
 with open('times.csv', 'wb') as f:
 	writer = csv.writer(f, delimiter=';')
-	writer.writerow(["czas_wykonania", "dlugosc_sciezki"])
+	writer.writerow(["czas wykonania", "dlugosc sciezki"])
 	for exc_time, path_len in parms:
 		writer.writerow([str(exc_time), str(path_len)])
-	writer.writerow(["srednia_dlugosc_sciezki:", "=ŚREDNIA(B2:B"+str(len(parms)+1)+")"])
+	writer.writerow(["srednia dlugosc sciezki:", "=ŚREDNIA(B2:B"+str(len(parms)+1)+")"])
 with open('avg_times.csv', 'wb') as f:
 	writer = csv.writer(f, delimiter=';')
-	writer.writerow(["dlugosc_sciezki", "sredni_czas_wykonania"])
+	writer.writerow(["dlugosc sciezki", "sredni czas wykonania"])
 	for key in sorted(map.keys(), key=int):
 		writer.writerow([str(key), str(sum(map[key])/float(len(map[key])))])
 subprocess.check_call(["rm", "-r", "result"])
