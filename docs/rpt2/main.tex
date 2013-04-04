@@ -76,23 +76,47 @@ Tworzenie przykładowego grafu małego świata składa się z dwóch kroków. Pi
 \end{figure}
 \section{Programy}
 
-\paragraph{architektura}
+Na potrzeby projektu zrealizowaliśmy dwa programy. Pierwszy z nich to właściwy program realizujący algorytm wyszukiwania najkrótszej ścieżki w grafie oraz ścieżek alternatywnych. Drugi jest generatorem grafów mających cechy ,,małego świata''. Nazwaliśmy je odpowiednio {\it ap} od {\it Alternate path} oraz {\it gg} od {\it Graph Generator}. Obydwa programy zostały napisane w języku C++ i wykorzystują bibliotekę Boost Graph \cite{bgl} do wewnętrznej reprezentacji grafu w postaci listy sąsiedztwa. Oprogramowanie tworzyliśmy i uruchamialiśmy na dwóch platformach: Linux oraz Mac OS X. W skład projektu wchodzi plik {\it Makefile} służący do budowy projektu. Po wydaniu polecenia {\it make} w głównym katalogu projektu następuje kompilacja plików źródłowych, której rezultatem są pliki wykonywalne {\it ap} oraz {\it gg}.
 
-\paragraph{Wejście programu}
+\subsection{Właściwy program}
+
 Program przyjmuje na wejściu graf oraz dwa wierzchołki: źródłowy i~docelowy. Graf musi być grafem nieskierowanym z~ważonymi krawędziami (wagi nieujemne) bez krawędzi równoległych. Graf jest zadawany w~pliku tekstowym. Format tego pliku jest zgodny z~formatem DOT \cite{dot}. Parametrami programu są:
 
 \begin{itemize}
 \item nazwa pliku tekstowego zawierającego opis grafu w~formacie DOT,
-\item nazwa wierzchołka źródłowego (ang. {\it source}) i~nazwa wierzchołka docelowego (ang. {\it target}).
+\item nazwa wierzchołka źródłowego (ang. {\it source}) i~nazwa wierzchołka docelowego (ang. {\it target}),
+\item nazwa katalogu na pliki wynikowe.
 \end{itemize}
 
 Przykładowe wywołanie programu może wyglądać w~ten sposób:
 
 \begin{verbatim}
-$ ./ap graph.dot -s w1 -t w5
+$ ./ap graph.dot -s w1 -t w5 -o output
 \end{verbatim}
 
-{\it ap} jest skrótem od {\it Alternate Path} - tak nazywa się nasz program. Przykładowy plik z~zadanym grafem wejściowym może wyglądać~w ten sposób:
+Na skutek takiego wywołania program odczytuje graf z pliku {\it graph.dot}, znajduje najkrótszą ścieżkę pomiędzy wierzchołkami {\it w1} i {\it w5} oraz alternatywne ścieżki, a pliki będące wynikiem działania zapisuje w katalogu {\it output}. Program wspiera również dodatkowe opcje, które były użyteczne podczas testów i eksperymentów:
+
+\begin{itemize}
+\item \texttt{--no-report} -- powoduje, że nie jest generowany plik raportu, o którym mowa dalej,
+\item \texttt{--no-html} -- powoduje, że nie są generowane pliki HTML wizualizujące rezultat działania programu.
+\end{itemize}
+
+Dostępne opcje programu wraz z krótkim opisem można przejrzeć po uruchomieniu programu z parametrem \texttt{--help}:
+
+\begin{verbatim}
+$ ./ap --help
+Usage: ap [options]
+Options::
+  -h [ --help ]         Produce help message
+  -f [ --file ] arg     Input graph filename (obligatory)
+  -s [ --source ] arg   Source vertex name (obligatory)
+  -t [ --target ] arg   Target vertex name (obligatory)
+  -o [ --outdir ] arg   Output directory name (obligatory)
+  --no-report           If specified, report won't be generated
+  --no-html             If specified, HTML won't be generated
+\end{verbatim}
+
+Przykładowy plik z~zadanym grafem wejściowym w formacie DOT może wyglądać~w ten sposób:
 
 \begin{verbatim}
 /* graph.dot */
@@ -106,10 +130,9 @@ graph G {
 }
 \end{verbatim}
 
-Plik opisujący graf może być przygotowany ręcznie, zostać pobrany z~Internetu, a~także może być wygenerowany przy pomocy naszego drugiego programu, tj. generatora grafów. Opis działania generatora grafów można znaleźć w~paragrafie \ref{generator}.
+Plik opisujący graf może być przygotowany ręcznie, zostać pobrany z~Internetu, a~także może być wygenerowany przy pomocy naszego drugiego programu, tj. generatora grafów.
 
-\paragraph{Wyjście programu}
-Wizualizację rezultatu działania programu zapewnia program NEATO z~pakietu Graphviz \cite{gv}. Służy on do rysowania grafów nieskierowanych. Za pomocą programu NEATO generowane są pliki, na podstawie których generowane są strony HTML. Na stronach można zobaczyć jak wyglądają najkrótsza ścieżka pomiędzy wierzchołkami źródłowym i~docelowym oraz najkrótsze ścieżki alternatywne (po kliknięciu na krawędź, którą uznaje się za awaryjną). Przykładowa zawartość stron może wyglądać w~ten sposób:
+Wizualizację rezultatu działania programu zapewnia program NEATO z~pakietu Graphviz \cite{gv}. Służy on do rysowania grafów nieskierowanych. Program NEATO jest wywoływany z poziomu naszego programu. Za pomocą programu NEATO generowane są pliki, na podstawie których nasz program generuje strony HTML. Na stronach można zobaczyć jak wyglądają najkrótsza ścieżka pomiędzy wierzchołkami źródłowym i~docelowym oraz najkrótsze ścieżki alternatywne (po kliknięciu na krawędź, którą uznaje się za awaryjną). Przykładowa zawartość stron może wyglądać w~ten sposób:
 
 \begin{figure}[ht]
 \begin{minipage}[b]{0.45\linewidth}
@@ -137,7 +160,37 @@ mar--prz | No emergency path
 prz--bar | mar--prz--foo--bar Cost: 15.8599 Hops: 3
 \end{verbatim}
 
+\subsection{Generator grafów}
 
+Danymi wyjściowymi generatora są grafy zapisane w formacie DOT. Parametrami generatora są:
+
+\begin{itemize}
+\item plik wyjściowy,
+\item liczba wierzchołków,
+\item liczba krawędzi wychodzących z każdego z wierzchołków,
+\item prawdopodobieństwo przepięcia krawędzi.
+\end{itemize}
+
+Przykładowe wywołanie:
+
+\begin{verbatim}
+$ ./gg graph.dot -n 30 -e 2 -p 0.20
+\end{verbatim}
+
+Powoduje wygenerowanie do pliku {\it graph.dot} grafu o 30 wierzchołkach, w którym z każdego wierzchołka prowadzone są początkowo dwie krawędzie (do dwóch kolejnych wierzchołków), a krawędzie są losowo przepięte z prawdopodobieństwem 0,20.
+
+Dostępne opcje programu wraz z krótkim opisem można przejrzeć po uruchomieniu programu z parametrem \texttt{--help}:
+
+\begin{verbatim}
+$ ./gg --help
+Usage: ./gg [options]
+Options::
+  -h [ --help ]         Produce help message
+  -o [ --output ] arg   Result graph filename (obligatory)
+  -n [ --num ] arg      Number of vertexes (obligatory)
+  -e [ --edges ] arg    Number of edges (obligatory)
+  -p [ --prob ] arg     Probability, that edge will be moved (obligatory)
+\end{verbatim}
 
 \section{Testy i~eksperymenty}
 
