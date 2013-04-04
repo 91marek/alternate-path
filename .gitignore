@@ -43,7 +43,7 @@ times.csv
 avg_times.csv
 graph.dot
 graph.gif
-*lock.avg_times*
+.~*.ods#
 
 # configuration files
 config.py

@@ -22,11 +22,11 @@ Muszą być spełnione następujące warunki: a)pierwsza wygenerowana ścieżka:
 
 \section{Algorytmy}
 
-\paragraph{Wyszukiwanie alternatywnych ścieżek}
+\subsection{Wyszukiwanie alternatywnych ścieżek}
 
 Graf jest wewnętrznie reprezentowany w~postaci listy sąsiedztwa, której implementację dostarcza biblioteka Boost Graph \cite{bgl}. Pomimo, że biblioteka dostarcza implementację algorytmu znajdującego najkrótszą ścieżkę pomiędzy dwoma wierzchołkami, zaimplementowaliśmy własny algorytm oparty na algorytmie Dijkstry. Ogólny algorytm polega na znalezieniu najkrótszej ścieżki pomiędzy wierzchołkami źródłowym i~docelowym oraz wykorzystaniu jej do dalszego przetwarzania. Kolejne krawędzie z~tej ścieżki są tymczasowo usuwane, aby uruchamiać algorytm znajdywania najkrótszej ścieżki, który dostarcza alternatywną ścieżkę dla awaryjnej krawędzi. Warto zwrócić uwagę na to, że mogą istnieć krawędzie, których usunięcie spowoduje, że graf przestanie być spójny. Takie krawędzie oznaczane są kolorem czerwonym, jako krytyczne. Nie ma alternatywnych ścieżek w~grafie dla krawędzi krytycznych.
 
-Złożność algorytmu Dijkstry zaleźy od liczby wierzchołków $V$ i krawędzi $E$. O rzedzie tej wielkości decyduje rodzaj kolejki priorytetowej wykorzystywanej do pobierania wierzchołka o najmniejszym dystansie. W przypadku naiwnej implementacji poprzez tablice złożoność ta wynosi $O(V^2)$. W naszym programie zastosowaliśmy implementacje kolejki opartą na stercie. W tym przypadku złożoność wynosi $O(E \log V)$. Wariant ten jest znacznie lepszy dla grafów rzadkich, którymi są sieci małego świata.
+Złożoność algorytmu Dijkstry zależy od liczby wierzchołków $V$ i krawędzi $E$. O rzędzie tej wielkości decyduje sposób implementacji kolejki priorytetowej wykorzystywanej do pobierania wierzchołka o najmniejszym dystansie. W przypadku naiwnej implementacji poprzez tablice złożoność ta wynosi $O(V^2)$. W naszym programie zastosowaliśmy implementację kolejki opartą na stercie. W tym przypadku złożoność wynosi $O(E \log V)$. Wariant ten jest znacznie lepszy dla grafów rzadkich, którymi są sieci małego świata.
 
 Rozpatrywany problem ma złożoność $O(P_{avg}*O_{Dijkstra})$, gdzie $P_{avg}$ to średnia długość ścieżki w grafie, natomiast $O_{Dijkstra}$ to złożoność algorytmu Dijkstry. Wynika to z podejścia widocznego w poniższym pseudokodzie.
 \begin{algorithmic}
@@ -43,12 +43,12 @@ Rozpatrywany problem ma złożoność $O(P_{avg}*O_{Dijkstra})$, gdzie $P_{avg}$
 \EndFor
 \State \Return{$path, emergencyPaths$}
 \end{algorithmic}
-Jak widać pętla wykonuje się średnio tyle razy, ile wynosi średnia długość ścieżki w grafie. W pętli najbardziej czasochłonną procedurą jest znalezienie najkrótszej ścieżki (funkcja $shortestPath$). Jej złożoność zależy od złożoności obliczeniowej algorytmu Dijkstry oraz odczytania ścieżki od $t$ do $s$, czyli wynosi $f(n) = O_{Dijkstra}+ P_{avg}$. Drugi człon ma jednak wolniejszy stopień wzrozstu w związku z czym można przyjąć $O_{shortestPath}=O(f(n))=O(O_{Dijkstra}+ P_{avg}) = O(O_{Dijkstra}) = O(E \log V)$.
+Jak widać pętla wykonuje się średnio tyle razy, ile wynosi średnia długość ścieżki w grafie. W pętli najbardziej czasochłonną procedurą jest znalezienie najkrótszej ścieżki (funkcja $shortestPath$). Jej złożoność zależy od złożoności obliczeniowej algorytmu Dijkstry oraz odczytania ścieżki od $t$ do $s$, czyli wynosi $f = O_{Dijkstra}+ P_{avg}$. Drugi człon ma jednak wolniejszy stopień wzrostu, w związku z czym można przyjąć $O_{shortestPath}=O(f)=O(O_{Dijkstra}+ P_{avg}) = O(O_{Dijkstra}) = O(E \log V)$.
 W związku z powyższym złożoność algorytmu to $O_{alg} = O( P_{avg}E \log V)$.
 
-\paragraph{Generator grafów}
+\subsection{Generowanie grafów}
 \label{generator}
-Złożoność obliczeniowa programu została zbadana na wygenerowanych grafach pochodzących z generatora grafów. Danymi wyjściowymi generatora są grafy zapisane w formacie DOT. Grafy te odwzorowują sieci małego świata\cite{amaral2000classes}. Oznacza to, że większość wierzchołków nie sąsiaduje ze sobą, ale pomiędzy większością par wierzchołków można znaleźć ścieżkę składającą się z małej liczby krawędzi. Sieci takie często obserwowane są np. w sieciach społecznościowych. Krawędź oznacza wtedy, że dwie osoby się znają.
+Wygenerowane grafy odwzorowują sieci małego świata\cite{amaral2000classes}. Oznacza to, że większość wierzchołków nie sąsiaduje ze sobą, ale pomiędzy większością par wierzchołków można znaleźć ścieżkę składającą się z małej liczby krawędzi. Sieci takie często obserwowane są np. w sieciach społecznościowych. Krawędź oznacza wtedy, że dwie osoby się znają.
 
 Tworzenie przykładowego grafu małego świata składa się z dwóch kroków. Pierwszym z nich jest stworzenie grafu o regularnej strukturze. Przykład zaprezentowany jest na Rys. \ref{fig:regul}. Następnie należy dla każdej z krawędzi wylosować, czy powinna ona zostać przepięta, czy też nienaruszona. W efekcie powstaje graf jak na Rys. \ref{fig:pomiesz}. Dla większej liczby wierzchołków graf widocznie nabiera cech ,,małego świata''. Widoczne jest to na Rys. \ref{fig:bignetwork}.
 
@@ -68,15 +68,16 @@ Tworzenie przykładowego grafu małego świata składa się z dwóch kroków. Pi
 \end{minipage}
 \end{figure}
 
-\begin{figure}[ht]
+\begin{figure}[!htbp]
 \centering
 \includegraphics[scale=0.23]{biggraph.png}
 \caption{\em Duży graf wygenerowany przez generator. Posiada cechy małego świata.}
 \label{fig:bignetwork}
 \end{figure}
+
 \section{Programy}
 
-Na potrzeby projektu zrealizowaliśmy dwa programy. Pierwszy z nich to właściwy program realizujący algorytm wyszukiwania najkrótszej ścieżki w grafie oraz ścieżek alternatywnych. Drugi jest generatorem grafów mających cechy ,,małego świata''. Nazwaliśmy je odpowiednio {\it ap} od {\it Alternate path} oraz {\it gg} od {\it Graph Generator}. Obydwa programy zostały napisane w języku C++ i wykorzystują bibliotekę Boost Graph \cite{bgl} do wewnętrznej reprezentacji grafu w postaci listy sąsiedztwa. Oprogramowanie tworzyliśmy i uruchamialiśmy na dwóch platformach: Linux oraz Mac OS X. W skład projektu wchodzi plik {\it Makefile} służący do budowy projektu. Po wydaniu polecenia {\it make} w głównym katalogu projektu następuje kompilacja plików źródłowych, której rezultatem są pliki wykonywalne {\it ap} oraz {\it gg}.
+Na potrzeby projektu zrealizowaliśmy dwa programy. Pierwszy z nich to właściwy program realizujący algorytm wyszukiwania najkrótszej ścieżki w grafie oraz ścieżek alternatywnych. Drugi jest generatorem grafów mających cechy ,,małego świata''. Nazwaliśmy je odpowiednio {\it ap} od {\it Alternate Path} oraz {\it gg} od {\it Graph Generator}. Obydwa programy zostały napisane w języku C++ i wykorzystują bibliotekę Boost Graph \cite{bgl} do wewnętrznej reprezentacji grafu w postaci listy sąsiedztwa. Oprogramowanie tworzyliśmy i uruchamialiśmy na dwóch platformach: Linux oraz Mac OS X. W skład projektu wchodzi plik {\it Makefile} służący do budowy projektu. Po wydaniu polecenia {\it make} w głównym katalogu projektu następuje kompilacja plików źródłowych, której rezultatem są pliki wykonywalne {\it ap} oraz {\it gg}.
 
 \subsection{Właściwy program}
 
@@ -132,7 +133,7 @@ graph G {
 
 Plik opisujący graf może być przygotowany ręcznie, zostać pobrany z~Internetu, a~także może być wygenerowany przy pomocy naszego drugiego programu, tj. generatora grafów.
 
-Wizualizację rezultatu działania programu zapewnia program NEATO z~pakietu Graphviz \cite{gv}. Służy on do rysowania grafów nieskierowanych. Program NEATO jest wywoływany z poziomu naszego programu. Za pomocą programu NEATO generowane są pliki, na podstawie których nasz program generuje strony HTML. Na stronach można zobaczyć jak wyglądają najkrótsza ścieżka pomiędzy wierzchołkami źródłowym i~docelowym oraz najkrótsze ścieżki alternatywne (po kliknięciu na krawędź, którą uznaje się za awaryjną). Przykładowa zawartość stron może wyglądać w~ten sposób:
+Wizualizację rezultatu działania programu zapewnia program NEATO z~pakietu Graphviz \cite{gv}. Służy on do rysowania grafów nieskierowanych. Program NEATO jest wywoływany z poziomu naszego programu. Za pomocą programu NEATO generowane są pliki, na podstawie których nasz program generuje strony HTML. Na stronach można zobaczyć, jak wyglądają najkrótsza ścieżka pomiędzy wierzchołkami źródłowym i~docelowym oraz najkrótsze ścieżki alternatywne (po kliknięciu na krawędź, którą uznaje się za awaryjną). Przykładowa zawartość stron może wyglądać jak na Rys. \ref{fig:picture1} i \ref{fig:picture2}.
 
 \begin{figure}[ht]
 \begin{minipage}[b]{0.45\linewidth}
@@ -150,9 +151,9 @@ Wizualizację rezultatu działania programu zapewnia program NEATO z~pakietu Gra
 \end{minipage}
 \end{figure}
 
-Na rysunku po lewo widzimy najkrótszą ścieżkę pomiędzy wierzchołkami \texttt{mar} a \texttt{bar}. Została ona oznaczona na kolorowo. Składa się z~dwóch krawędzi. Na wypadek awarii krawędzi zielonej istnieje ścieżka alternatywna, która jest przedstawiona na rysunku po prawo. Czerwona krawędź jest krytyczna - nie ma dla niej alternatywnych ścieżek.
+Na Rys. \ref{fig:picture1} widzimy najkrótszą ścieżkę pomiędzy wierzchołkami \texttt{mar} a \texttt{bar}. Została ona oznaczona na kolorowo. Składa się z~dwóch krawędzi. Na wypadek awarii krawędzi zielonej istnieje ścieżka alternatywna, która jest przedstawiona na Rys. \ref{fig:picture2}. Czerwona krawędź jest krytyczna - nie ma dla niej alternatywnych ścieżek. Usunięcie tej krawędzi spowodowałoby, że nie byłoby ścieżki pomiędzy wierzchołkami \texttt{mar} a \texttt{bar}.
 
-Drugim rezultatem działania programu jest plik \texttt{report.txt} zawierający informacje o~najkrótszej ścieżce oraz ścieżkach alternatywnych. Przy każdej ze ścieżek jest informacja o~koszcie (sumie wag krawędzi) i liczbie krawędzi (liczbie przeskoków). Przykładowa zawartość pliku raportu może wyglądać w~ten sposób:
+Drugim rezultatem działania programu jest plik \texttt{report.txt} zawierający informacje o~najkrótszej ścieżce oraz ścieżkach alternatywnych. Przy każdej ze ścieżek jest informacja o~koszcie (sumie wag krawędzi) i liczbie krawędzi (liczbie przeskoków). Plik raportu dla powyższego przykładu wygląda w~ten sposób:
 
 \begin{verbatim}
 Shortest path: mar--prz--bar Cost: 13.1416 Hops: 2
@@ -167,17 +168,17 @@ Danymi wyjściowymi generatora są grafy zapisane w formacie DOT. Parametrami ge
 \begin{itemize}
 \item plik wyjściowy,
 \item liczba wierzchołków,
-\item liczba krawędzi wychodzących z każdego z wierzchołków,
+\item liczba krawędzi prowadzonych z każdego z wierzchołków do następników,
 \item prawdopodobieństwo przepięcia krawędzi.
 \end{itemize}
 
 Przykładowe wywołanie:
 
 \begin{verbatim}
-$ ./gg graph.dot -n 30 -e 2 -p 0.20
+$ ./gg graph.dot -n 30 -e 2 -p 20
 \end{verbatim}
 
-Powoduje wygenerowanie do pliku {\it graph.dot} grafu o 30 wierzchołkach, w którym z każdego wierzchołka prowadzone są początkowo dwie krawędzie (do dwóch kolejnych wierzchołków), a krawędzie są losowo przepięte z prawdopodobieństwem 0,20.
+Powoduje wygenerowanie do pliku {\it graph.dot} grafu o $30$ wierzchołkach, w którym z każdego wierzchołka prowadzone są dwie krawędzie do dwóch kolejnych wierzchołków, a krawędzie są losowo przepięte z prawdopodobieństwem $\frac{20}{100}$.
 
 Dostępne opcje programu wraz z krótkim opisem można przejrzeć po uruchomieniu programu z parametrem \texttt{--help}:
 
@@ -192,14 +193,23 @@ Options::
   -p [ --prob ] arg     Probability, that edge will be moved (obligatory)
 \end{verbatim}
 
-\section{Testy i~eksperymenty}
+\section{Testy i eksperymenty}
 
-W celu zbadania złożoności algorytmu stworzony został skrypt zapisujący czas działania programu wraz z długością najkrótszej ścieżki pomiędzy wylosowanymi wierzchołkami. Przykładowy wynik działania prezentuje Rys. \ref{fig:tabela}.
+Złożoność obliczeniowa programu została zbadana na wygenerowanych grafach pochodzących z generatora grafów. W celu zbadania złożoności algorytmu napisany został skrypt w języku Python, którego nazwa to {\it analyze\_algorithm.py}. Na początku swojego działania generuje on graf za pomocą generatora używając parametrów grafu z pliku {\it config.py}. Następnie określoną liczbę razy losuje wierzchołki źródłowy i docelowy, aby zmierzyć czas działania właściwego programu.
+
+Skrypt zapisuje:
+
+\begin{itemize}
+\item czasy działania programu wraz z długością najkrótszej ścieżki pomiędzy wylosowanymi wierzchołkami,
+\item 
+\end{itemize}
+
+Przykładowy wynik działania prezentuje Rys. \ref{fig:tabela}.
 
 \begin{figure}[ht]
 \centering
 \includegraphics[scale=0.7]{tabela.png}
-\caption{\em Zestawienie wynikow}
+\caption{\em Zestawienie wyników}
 \label{fig:tabela}
 \end{figure}
 
