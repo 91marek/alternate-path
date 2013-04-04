@@ -195,22 +195,29 @@ Options::
 
 \section{Testy i eksperymenty}
 
-Złożoność obliczeniowa programu została zbadana na wygenerowanych grafach pochodzących z generatora grafów. W celu zbadania złożoności algorytmu napisany został skrypt w języku Python, którego nazwa to {\it analyze\_algorithm.py}. Na początku swojego działania generuje on graf za pomocą generatora używając parametrów grafu z pliku {\it config.py}. Następnie określoną liczbę razy losuje wierzchołki źródłowy i docelowy, aby zmierzyć czas działania właściwego programu.
-
-Skrypt zapisuje:
+Złożoność obliczeniowa programu została zbadana za pomocą skryptu, który korzysta z generatora grafów. Skrypt został napisany w języku Python, a jego nazwa to {\it analyze\_algorithm.py}. Na początku swojego działania generuje on graf używając parametrów grafu z pliku {\it config.py}. Następnie określoną liczbę razy losuje wierzchołki źródłowy i docelowy, aby uruchamiać właściwy program i mierzyć czas jego działania. Właściwy program uruchamiany jest z opcją \texttt{--no-html}, aby czas działania programu NEATO nie wpływał na ogólny czas działania właściwego programu. Skrypt zapisuje w plikach {\it *.csv}:
 
 \begin{itemize}
-\item czasy działania programu wraz z długością najkrótszej ścieżki pomiędzy wylosowanymi wierzchołkami,
-\item 
+\item czasy działania programu wraz z liczbą krawędzi ścieżki pomiędzy wylosowanymi wierzchołkami,
+\item średnie czasy działania programu dla poszczególnych liczb krawędzi ścieżki.
 \end{itemize}
 
-Przykładowy wynik działania prezentuje Rys. \ref{fig:tabela}.
+Przykładowy wynik działania skryptu prezentuje Rys. \ref{fig:tabela1} i \ref{fig:tabela2}.
 
 \begin{figure}[ht]
+\begin{minipage}[b]{0.45\linewidth}
 \centering
-\includegraphics[scale=0.7]{tabela.png}
-\caption{\em Zestawienie wyników}
-\label{fig:tabela}
+\includegraphics[width=\textwidth]{tabela1.png}
+\caption{\em Czasy działania programu wraz z liczbą krawędzi ścieżki}
+\label{fig:tabela1}
+\end{minipage}
+\hspace{0.5cm}
+\begin{minipage}[b]{0.45\linewidth}
+\centering
+\includegraphics[width=\textwidth]{tabela2.png}
+\caption{\em Średnie czasy działania programu dla poszczególnych liczb krawędzi ścieżki}
+\label{fig:tabela2}
+\end{minipage}
 \end{figure}
 
 Dzięki takiemu zestawieniu można sprawdzić, czy złożoność teoretyczna algorytmu została wyznaczona poprawnie.
