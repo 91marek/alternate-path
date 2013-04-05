@@ -23,7 +23,7 @@ Muszą być spełnione następujące warunki: a)pierwsza wygenerowana ścieżka:
 \section{Algorytmy}
 
 \subsection{Wyszukiwanie alternatywnych ścieżek}
-
+\label{wyszukiwanie}
 Graf jest wewnętrznie reprezentowany w~postaci listy sąsiedztwa, której implementację dostarcza biblioteka Boost Graph \cite{bgl}. Pomimo, że biblioteka dostarcza implementację algorytmu znajdującego najkrótszą ścieżkę pomiędzy dwoma wierzchołkami, zaimplementowaliśmy własny algorytm oparty na algorytmie Dijkstry. Ogólny algorytm polega na znalezieniu najkrótszej ścieżki pomiędzy wierzchołkami źródłowym i~docelowym oraz wykorzystaniu jej do dalszego przetwarzania. Kolejne krawędzie z~tej ścieżki są tymczasowo usuwane, aby uruchamiać algorytm znajdywania najkrótszej ścieżki, który dostarcza alternatywną ścieżkę dla awaryjnej krawędzi. Warto zwrócić uwagę na to, że mogą istnieć krawędzie, których usunięcie spowoduje, że graf przestanie być spójny. Takie krawędzie oznaczane są kolorem czerwonym, jako krytyczne. Nie ma alternatywnych ścieżek w~grafie dla krawędzi krytycznych.
 
 Złożoność algorytmu Dijkstry zależy od liczby wierzchołków $V$ i krawędzi $E$. O rzędzie tej wielkości decyduje sposób implementacji kolejki priorytetowej wykorzystywanej do pobierania wierzchołka o najmniejszym dystansie. W przypadku naiwnej implementacji poprzez tablice złożoność ta wynosi $O(V^2)$. W naszym programie zastosowaliśmy implementację kolejki opartą na stercie. W tym przypadku złożoność wynosi $O(E \log V)$. Wariant ten jest znacznie lepszy dla grafów rzadkich, którymi są sieci małego świata.
@@ -47,7 +47,7 @@ Jak widać pętla wykonuje się średnio tyle razy, ile wynosi średnia długoś
 W związku z powyższym złożoność algorytmu to $O_{alg} = O( P_{avg}E \log V)$.
 
 \subsection{Generowanie grafów}
-\label{generator}
+\label{generowanie}
 Wygenerowane grafy odwzorowują sieci małego świata\cite{amaral2000classes}. Oznacza to, że większość wierzchołków nie sąsiaduje ze sobą, ale pomiędzy większością par wierzchołków można znaleźć ścieżkę składającą się z małej liczby krawędzi. Sieci takie często obserwowane są np. w sieciach społecznościowych. Krawędź oznacza wtedy, że dwie osoby się znają.
 
 Tworzenie przykładowego grafu małego świata składa się z dwóch kroków. Pierwszym z nich jest stworzenie grafu o regularnej strukturze. Przykład zaprezentowany jest na Rys. \ref{fig:regul}. Następnie należy dla każdej z krawędzi wylosować, czy powinna ona zostać przepięta, czy też nienaruszona. W efekcie powstaje graf jak na Rys. \ref{fig:pomiesz}. Dla większej liczby wierzchołków graf widocznie nabiera cech ,,małego świata''. Widoczne jest to na Rys. \ref{fig:bignetwork}.
@@ -215,32 +215,53 @@ Przykładowy wynik działania skryptu prezentuje Rys. \ref{fig:tabela1} i \ref{f
 \begin{minipage}[b]{0.45\linewidth}
 \centering
 \includegraphics[width=\textwidth]{tabela2.png}
-\caption{\em Średnie czasy działania programu dla poszczególnych liczb krawędzi ścieżki}
+\caption{\em Średnie czasy działania programu dla poszczególnych liczb krawędzi w ścieżce}
 \label{fig:tabela2}
 \end{minipage}
 \end{figure}
 
-\begin{figure}[htb]
+Na podstawie plików {\it *.csv} zostały wygenerowane wykresy z Rys. \ref{fig:wykres200V}, \ref{fig:wykres300V}, \ref{fig:wykres500V} i \ref{fig:wykres200V1000E}. Pokazują one zależność czasu działania programu od liczby krawędzi najkrótszej ścieżki pomiędzy dwoma wylosowanymi wierzchołkami. Jak widać, jest to zależność liniowa. Wynik eksperymentu potwierdza teoretyczne rozważania z rozdziału \ref{wyszukiwanie}.
+
+\begin{figure}[!htb]
 \centering
-\includegraphics[scale=1]{tests/3/wykres.PNG}
-\caption{\em Czasy działania programu wraz z liczbą krawędzi ścieżki}
+\includegraphics[scale=0.8]{tests/3/wykres.PNG}
+\caption{\em Wykres średnich czasów działania programu dla poszczególnych liczb krawędzi w ścieżce}
 \label{fig:wykres200V}
 \end{figure}
 
-\begin{figure}[htb]
+\begin{figure}[!htb]
 \centering
-\includegraphics[scale=1]{tests/1/wykres.PNG}
-\caption{\em Średnie czasy działania programu dla poszczególnych liczb krawędzi ścieżki}
+\includegraphics[scale=0.8]{tests/1/wykres.PNG}
+\caption{\em Wykres średnich czasów działania programu dla poszczególnych liczb krawędzi w ścieżce}
 \label{fig:wykres300V}
 \end{figure}
 
-\begin{figure}[htb]
+\begin{figure}[!htb]
 \centering
-\includegraphics[scale=1]{tests/2/wykres.PNG}
-\caption{\em Duży graf wygenerowany przez generator. Posiada cechy małego świata.}
+\includegraphics[scale=0.8]{tests/2/wykres.PNG}
+\caption{\em Wykres średnich czasów działania programu dla poszczególnych liczb krawędzi w ścieżce}
 \label{fig:wykres500V}
 \end{figure}
-Dzięki takiemu zestawieniu można sprawdzić, czy złożoność teoretyczna algorytmu została wyznaczona poprawnie.
+
+\begin{figure}[!htb]
+\centering
+\includegraphics[scale=0.6]{tests/6/wykres.PNG}
+\caption{\em Wykres średnich czasów działania programu dla poszczególnych liczb krawędzi w ścieżce}
+\label{fig:wykres200V1000E}
+\end{figure}
+
+Wykres z Rys. \ref{fig:wykres-porownanie} porównuje zmierzone czasy dla dwóch grafów o tej samej liczbie krawędzi, wierzchołków i zbliżonych średnich liczbach krawędzi w ścieżce. Jak widać, czasy są do siebie zbliżone.
+
+\begin{figure}[!htb]
+\centering
+\includegraphics[scale=0.6]{tests/4/wykres.PNG}
+\caption{\em Wykresy dla dwóch grafów o tej samej liczbie krawędzi i wierzchołków}
+\label{fig:wykres-porownanie}
+\end{figure}
+
+\section{Podsumowanie}
+
+Podsumowując, w ramach przedmiotu zostały napisane dwa programy oraz jeden skrypt do analizy algorytmu. Pierwszy program realizuje wymagania z opisu zadania projektowego. Tworzy on przyjazną reprezentację graficzną wyników. Drugi jest generatorem grafów ,,małych światów'' i pozwolił nam na wygenerowanie grafów niezbędnych do eksperymentów. Działanie aplikacji zostało przetestowane oraz została zbadana złożoność zastosowanego algorytmu opartego na algorytmie Dijkstry.
 
 \begin{thebibliography}{}
 \bibitem{dot} ,,The DOT Language'' \\ \url{http://www.graphviz.org/doc/info/lang.html}
