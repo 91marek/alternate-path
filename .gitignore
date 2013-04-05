@@ -39,10 +39,10 @@ path*.dot
 report.txt
 
 # files from analisys
-times.csv
-avg_times.csv
-graph.dot
-graph.gif
+/times.csv
+/avg_times.csv
+/graph.dot
+/graph.gif
 .~*.ods#
 
 # configuration files
